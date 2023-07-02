@@ -1,5 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config()
+require("dotenv").config({ path: "../../.env" });
 
 const { RPC_URL, PRIVATE_KEY, ETHERSCAN_KEY } = process.env;
 
