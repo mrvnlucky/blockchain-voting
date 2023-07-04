@@ -49,30 +49,12 @@ exports.getAllCandidates = async (req, res) => {
     // const tx_allCandidates = await contractInstance.getAllCandidates();
     const allCandidates = await Candidate.findAll();
 
-    // const tx_candidates = tx_allCandidates.map((tx_candidate) => ({
-    //   id: parseInt(tx_candidate.id),
-    //   name: tx_candidate.name,
-    //   voteCount: parseInt(tx_candidate.voteCount),
-    // }));
-
-    // const candidates = allCandidates.map((candidate) => ({
-    //   candidateId: candidate.candidateId,
-    //   vision: candidate.vision,
-    //   mission: candidate.mission,
-    // }));
-
-    // const combinedData = candidates.map((candidate) => {
-    //   const matchingCandidate = tx_candidates.find(
-    //     (tx_candidate) => tx_candidate.id === candidate.candidateId
-    //   );
-    //   return {
-    //     ...candidate,
-    //     voteCount: matchingCandidate ? matchingCandidate.voteCount : 0,
-    //     name: matchingCandidate ? matchingCandidate.name : "",
-    //   };
-    // });
-
     const candidates = allCandidates.map((candidate) => ({
+      id: candidate.id,
+      parents: {
+        father_id: candidate.father_id,
+        mother_id: candidate.mother_id,
+      },
       candidateNo: candidate.candidateNo,
       name: candidate.name,
       vision: candidate.vision,

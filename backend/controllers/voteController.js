@@ -20,7 +20,7 @@ exports.voteCandidate = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findOne({
-      where: { id: req.user.id },
+      where: { id: req.user.data.id },
     });
     const privateKey = decryptText(user.privateKey);
     const userContractInstance = setUserContractInstance(privateKey);
@@ -40,7 +40,7 @@ exports.voteCandidate = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: "Error occurred! " + error,
+      message: error.message,
     });
   }
 };
@@ -48,31 +48,46 @@ exports.voteCandidate = async (req, res) => {
 // @desc    Vote candidate
 // @route   POST /api/v1/vote/result
 // @access  user
-exports.getResult = async (req, res) => {
+exports.getVoteResult = async (req, res) => {
   try {
-    const { id } = req.params;
+    // const { id } = req.params;
     const tx_users = await contractInstance.getAllVoters();
-    const users = tx_users.map((user) => ({
-      voterAddress: user.voterAddress,
-      isVoted: user.isVoted,
-      hashedCandidateNo: user.hashedCandidateNo,
-      isAllowed: user.isAllowed,
-      candidateNo:
-        user.hashedCandidateNo !== ""
-          ? decryptText(user.hashedCandidateNo)
-          : "",
-    }));
+    const users = tx_users.map((user) => {
+      const candidateNo = parseInt(
+        user.hashedCandidateNo !== "" ? decryptText(user.hashedCandidateNo) : ""
+      );
+      return {
+        voterAddress: user.voterAddress,
+        isVoted: user.isVoted,
+        hashedCandidateNo: user.hashedCandidateNo,
+        isAllowed: user.isAllowed,
+        candidateNo: candidateNo,
+      };
+    });
 
+    const allCandidates = await Candidate.findAll();
+
+    const candidates = allCandidates.map((candidate) => {
+      const voteCount = users.filter(
+        (user) => user.candidateNo === candidate.candidateNo
+      ).length;
+      return {
+        candidateNo: candidate.candidateNo,
+        name: candidate.name,
+        vision: candidate.vision,
+        mission: candidate.mission,
+        voteCount: voteCount,
+      };
+    });
     res.status(200).send({
       success: true,
-      message: "Vote successful",
-      data: users,
-      // tx_data: tx,
+      message: "Fetched vote result successfully",
+      data: candidates,
     });
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: "Error occurred! " + error,
+      message: error,
     });
   }
 };
@@ -91,7 +106,7 @@ exports.startVoting = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: "Error occurred! " + error,
+      message: error,
     });
   }
 };
@@ -110,7 +125,7 @@ exports.stopVoting = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       success: false,
-      message: "Error occurred! " + error,
+      message: error,
     });
   }
 };

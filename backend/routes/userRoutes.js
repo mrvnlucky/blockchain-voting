@@ -1,14 +1,21 @@
 const router = require("express").Router();
-const userController = require("../controllers/userController");
+const {
+  loginUser,
+  getAllUsers,
+  getOneUser,
+  createUser,
+  deleteUser,
+  updateUser,
+} = require("../controllers/userController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 
-router.post("/login", userController.loginUser);
+router.post("/login", loginUser);
 
 // Routes for admin
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getOneUser);
-router.post("/", authMiddleware, userController.createUser);
-router.delete("/:id", authMiddleware, userController.deleteUser);
-router.put("/:id", authMiddleware, userController.updateUser);
+router.get("/", getAllUsers);
+router.get("/:id", getOneUser);
+router.post("/", authMiddleware, createUser);
+router.delete("/:id", authMiddleware, deleteUser);
+router.put("/:id", authMiddleware, updateUser);
 
 module.exports = router;

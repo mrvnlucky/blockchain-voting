@@ -1,10 +1,15 @@
 const router = require("express").Router();
-const voteController = require("../controllers/voteController");
+const {
+  voteCandidate,
+  startVoting,
+  stopVoting,
+  getVoteResult,
+} = require("../controllers/voteController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 
-router.post("/cast/:id", authMiddleware, voteController.voteCandidate);
-router.post("/start", authMiddleware, voteController.startVoting);
-router.post("/stop", authMiddleware, voteController.stopVoting);
-router.get("/result", voteController.getResult);
+router.post("/cast/:id", authMiddleware, voteCandidate);
+router.post("/start", authMiddleware, startVoting);
+router.post("/stop", authMiddleware, stopVoting);
+router.get("/result", getVoteResult);
 
 module.exports = router;

@@ -1,12 +1,19 @@
 const router = require("express").Router();
-const candidateController = require("../controllers/candidateController");
+const {
+  getAllCandidates,
+  createCandidate,
+  deleteCandidate,
+  getOneCandidate,
+  updateCandidate,
+} = require("../controllers/candidateController");
+const { authMiddleware } = require("../middleware/authMiddleware");
 
-router.get("/", candidateController.getAllCandidates);
+router.get("/", getAllCandidates);
+router.get("/:id", getOneCandidate);
 
 // Routes for admin
-router.post("/", candidateController.createCandidate);
-router.delete("/:id", candidateController.deleteCandidate);
-router.get("/:id", candidateController.getOneCandidate);
-router.put("/:id", candidateController.updateCandidate);
+router.post("/", authMiddleware, createCandidate);
+router.delete("/:id", authMiddleware, deleteCandidate);
+router.put("/:id", authMiddleware, updateCandidate);
 
 module.exports = router;

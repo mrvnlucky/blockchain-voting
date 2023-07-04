@@ -72,7 +72,10 @@ exports.loginAdmin = async (req, res) => {
         success: true,
         message: "Admin login successful",
         data: admin,
-        adminToken: generateToken(admin.id),
+        adminToken: generateToken({
+          id: admin.id,
+          role: "admin",
+        }),
       });
     }
   } catch (error) {

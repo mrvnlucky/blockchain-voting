@@ -63,8 +63,11 @@ exports.createUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Registration successful",
+      userToken: generateToken({
+        id: user.id,
+        role: "user",
+      }),
       data: user,
-      userToken: generateToken(user.id),
       tx_data: tx,
     });
   } catch (error) {
@@ -106,8 +109,11 @@ exports.loginUser = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Login successful",
+      userToken: generateToken({
+        id: user.id,
+        role: "user",
+      }),
       data: user,
-      userToken: generateToken(user.id),
     });
   } catch (error) {
     console.error("Error during login", error);
