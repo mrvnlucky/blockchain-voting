@@ -1,6 +1,6 @@
 const db = require("../models");
 const Admin = db.Admin;
-const Op = db.Sequelize.Op;
+
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/generateToken");
 require("dotenv").config();
@@ -13,9 +13,9 @@ exports.createAdmin = async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return es.status(400).send({
+      return res.status(400).send({
         success: false,
-        message: "Please add all fields",
+        message: "Please add all required fields",
       });
     }
 
@@ -58,6 +58,13 @@ exports.loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    if (!username || !password) {
+      return res.status(400).send({
+        success: false,
+        message: "Please add all required fields",
+      });
+    }
+
     // Check for admin username
     const admin = await Admin.findOne({ where: { username: username } });
     if (!admin) {
@@ -67,21 +74,18 @@ exports.loginAdmin = async (req, res) => {
       });
     }
 
+    const token = generateToken({ id: admin.id, role: "admin" });
     if (admin && (await bcrypt.compare(password, admin.password))) {
       res.send({
         success: true,
         message: "Admin login successful",
-        data: admin,
-        adminToken: generateToken({
-          id: admin.id,
-          role: "admin",
-        }),
+        data: { token, admin },
       });
     }
   } catch (error) {
     return res.status(400).send({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -100,7 +104,7 @@ exports.getAllAdmins = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };

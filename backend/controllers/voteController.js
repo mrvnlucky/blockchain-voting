@@ -2,15 +2,11 @@ const db = require("../models");
 const User = db.User;
 const Candidate = db.Candidate;
 require("dotenv").config();
-
 const {
-  provider,
-  signer,
-  abi,
-  contractAddress,
   contractInstance,
   setUserContractInstance,
 } = require("../config/blockchainConfig");
+
 const { encryptText, decryptText } = require("../utils/encryption");
 
 // @desc    Vote candidate

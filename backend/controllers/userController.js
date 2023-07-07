@@ -13,13 +13,14 @@ exports.createUser = async (req, res) => {
   try {
     const { nik, password } = req.body;
     if (!nik || !password) {
-      return res.status(400).send({ message: "Please add all fields" });
+      return res.status(400).send({
+        message: "Please add all required fields",
+      });
     }
 
     // Check if user exists
     const users = await User.findAll();
     const userExists = users.find((user) => bcrypt.compareSync(nik, user.nik));
-    // const userExists = await User.findOne({ where: { nik: nik } });
     if (userExists) {
       return res.status(400).send({
         success: false,
@@ -32,8 +33,6 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const hashedNik = await bcrypt.hash(nik, salt);
 
-    // const encryptedData = await encryptText(testData);
-
     const wallet = ethers.Wallet.createRandom();
     const walletAddress = wallet.address;
     const privateKey = wallet.privateKey;
@@ -42,15 +41,11 @@ exports.createUser = async (req, res) => {
       to: walletAddress,
       value: ethers.utils.parseEther("0.001"),
     };
+
     const transactionSendEth = await signer.sendTransaction(tx_sendEth);
 
     const hashedPrivateKey = encryptText(privateKey);
     const hashedWalletAddress = encryptText(walletAddress);
-    console.log("walletAddress: " + walletAddress);
-    console.log("privateKey: " + privateKey);
-
-    console.log("hashedPK: " + hashedPrivateKey);
-    console.log("hashedWalletAddress: " + hashedWalletAddress);
 
     // Create user
     const user = await User.create({
@@ -60,21 +55,18 @@ exports.createUser = async (req, res) => {
       privateKey: hashedPrivateKey,
     });
 
+    const token = generateToken({ id: user.id, role: "user" });
+
     res.status(201).json({
       success: true,
       message: "Registration successful",
-      userToken: generateToken({
-        id: user.id,
-        role: "user",
-      }),
-      data: user,
-      tx_data: tx,
+      data: { token, user },
     });
   } catch (error) {
     console.error("Error during registration", error);
     res.status(400).send({
       success: false,
-      message: "Error occurred!" + error,
+      message: error.message,
     });
   }
 };
@@ -106,18 +98,18 @@ exports.loginUser = async (req, res) => {
       });
     }
 
+    const token = generateToken({ id: user.id, role: "user" });
+
     res.status(200).send({
       success: true,
       message: "Login successful",
-      userToken: generateToken({
-        id: user.id,
-        role: "user",
-      }),
-      data: user,
+      data: { token, user },
     });
   } catch (error) {
     console.error("Error during login", error);
-    res.status(500).send({ message: error });
+    res.status(500).send({
+      message: error.message,
+    });
   }
 };
 
@@ -164,7 +156,7 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "Error occurred!" + error,
+      message: error.message,
     });
   }
 };
@@ -184,7 +176,7 @@ exports.getOneUser = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "Error occurred!" + error,
+      message: error.message,
     });
   }
 };
@@ -223,7 +215,7 @@ exports.updateUser = async (req, res) => {
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: "Error occurred!" + error,
+      message: error.message,
     });
   }
 };
@@ -233,10 +225,8 @@ exports.updateUser = async (req, res) => {
 // @access  Admin
 exports.deleteUser = async (req, res) => {
   try {
-    // const user = await User.findOne({ where: { id: req.params.id } });
     const { id } = req.params;
     const user = await User.findOne({ where: { id: id } });
-    // const user = user.find((user) => bcrypt.compareSync(id, user.hashedNik));
     if (!user) {
       return res.status(400).send({
         success: false,
@@ -254,7 +244,7 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: "Error occurred!" + error,
+      message: error.message,
     });
   }
 };
