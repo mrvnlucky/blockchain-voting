@@ -9,17 +9,17 @@ export default function Homepage() {
     <Container>
       <Grid container direction={"column"}>
         <Typography>Daftar Kandidat</Typography>
-        <Grid container direction={"row"}>
-          <Grid item sm="4">
+        <Grid container direction={"row"} spacing={3}>
+          <Grid item md={4} sm={6} xs={12}>
             <CandidateCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <CandidateCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <CandidateCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <CandidateCard />
           </Grid>
         </Grid>

@@ -9,20 +9,28 @@ export default function Result() {
     <Container>
       <Grid container direction={"column"}>
         <Typography>Hasil Akhir</Typography>
-        <Grid container direction={"row"}>
-          <Grid item sm="12">
+        <Grid container direction={"row"} spacing={3}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <ResultCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <ResultCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <ResultCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <ResultCard />
           </Grid>
-          <Grid item sm="4">
+          <Grid item md={4} sm={6} xs={12}>
             <ResultCard />
           </Grid>
         </Grid>

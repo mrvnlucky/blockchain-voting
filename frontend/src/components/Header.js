@@ -11,8 +11,19 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { Link } from "react-router-dom";
 
-const pages = ["Daftar Kandidat", "Hasil Akhir"];
+const pages = [
+  {
+    name: "Daftar Kandidat",
+    url: "",
+  },
+  {
+    name: "Hasil Akhir",
+    url: "hasil-akhir",
+  },
+];
+
 const settings = ["Suara Saya", "Logout"];
 
 export default function ResponsiveAppBar() {
@@ -42,8 +53,6 @@ export default function ResponsiveAppBar() {
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -87,8 +96,15 @@ export default function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Typography
+                    textAlign="center"
+                    component={Link}
+                    to={page.url}
+                    sx={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    {page.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -99,7 +115,6 @@ export default function ResponsiveAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href=""
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -116,11 +131,17 @@ export default function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.name}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                component={Link}
+                to={page.url}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
@@ -149,7 +170,13 @@ export default function ResponsiveAppBar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography
+                    textAlign="center"
+                    component={Link}
+                    sx={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    {setting}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

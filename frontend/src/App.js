@@ -10,14 +10,6 @@ import ResultPage from "./pages/ResultPage";
 import CandidateDash from "./pages/admin/CandidateDash";
 import AdminDash from "./pages/admin/AdminDash";
 import UserDash from "./pages/admin/UserDash";
-// import Login from "./pages/Login";
-// import Profile from "./pages/Profile";
-// import Wallet from "./utils/Wallet";
-// import LoginScreen from "./pages/Login";
-// import ProfileScreen from "./pages/ProfileScreen";
-// import HomeScreen from "./pages/Homescreen";
-// import ProtectedRoute from "./routing/ProtectedRoute";
-// import Header from "./components/Header";
 
 function App() {
   return (
@@ -29,7 +21,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/candidate" element={<CandidatePage />} />
-          <Route path="/result" element={<ResultPage />} />
+          <Route path="/hasil-akhir" element={<ResultPage />} />
           <Route path="/su/users" element={<UserDash />} />
           <Route path="/su/candidates" element={<CandidateDash />} />
           <Route path="/su/admins" element={<AdminDash />} />
