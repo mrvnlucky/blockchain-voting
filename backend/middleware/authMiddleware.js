@@ -12,6 +12,11 @@ exports.authMiddleware = (req, res, next) => {
 
     // Attach the user payload to the request object
     req.user = decodedToken;
+    if (req.user.role !== "user") {
+      res.status(401).json({
+        message: "Authentication failed",
+      });
+    }
 
     next();
   } catch (error) {
@@ -38,6 +43,7 @@ exports.adminAuthMiddleware = (req, res, next) => {
         message: "Authentication failed",
       });
     }
+    next();
   } catch (error) {
     console.error("Error during authentication", error.message);
     res.status(401).json({
