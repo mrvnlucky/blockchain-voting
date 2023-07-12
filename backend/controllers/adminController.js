@@ -1,8 +1,8 @@
+const { contractInstance } = require("../config/blockchainConfig");
 const db = require("../models");
 const Admin = db.Admin;
 
 const bcrypt = require("bcrypt");
-const { generateToken } = require("../utils/generateToken");
 require("dotenv").config();
 
 // @desc    Add new admin account
@@ -51,45 +51,6 @@ exports.createAdmin = async (req, res) => {
   }
 };
 
-// @desc    Authenticate admin account
-// @route   POST /api/v1/admins/login
-// @access  Admin
-exports.loginAdmin = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).send({
-        success: false,
-        message: "Please add all required fields",
-      });
-    }
-
-    // Check for admin username
-    const admin = await Admin.findOne({ where: { username: username } });
-    if (!admin) {
-      return res.status(400).send({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    const token = generateToken({ id: admin.id, role: "admin" });
-    if (admin && (await bcrypt.compare(password, admin.password))) {
-      res.send({
-        success: true,
-        message: "Admin login successful",
-        data: { token, admin },
-      });
-    }
-  } catch (error) {
-    return res.status(400).send({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
 // @desc    Get admins
 // @route   GET /api/v1/admins
 // @access  Public
@@ -103,6 +64,48 @@ exports.getAllAdmins = async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getOneAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findOne({ where: { id: id } });
+    res.status(200).json({
+      success: true,
+      message: "Successfully fetch admin",
+      data: admin,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+exports.deleteAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Admin.findOne({ where: { id: id } });
+    if (!user) {
+      return res.status(400).send({
+        success: false,
+        message: "Admin not found.",
+      });
+    }
+    await user.destroy();
+    // TODO: need to add contract instance for deleting the user via hashed wallet address that is later encrypted before sending to the smart contract to be removed.
+    // Reason: nanti kalo hapus user jadi vote nya ikut kehapus dari smart contract. kalo ga nanti bisa terjadi dimana user yang udah keapus vote nya masih keitung.
+
+    res.status(200).json({
+      success: true,
+      message: "Admin successfully removed.",
+    });
+  } catch (error) {
+    res.status(400).send({
       success: false,
       message: error.message,
     });

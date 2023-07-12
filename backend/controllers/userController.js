@@ -71,48 +71,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/v1/users/login
-// @access  Public
-exports.loginUser = async (req, res) => {
-  try {
-    const { nik, password } = req.body;
-    // Check for user nik
-    const users = await User.findAll();
-    const user = users.find((user) => bcrypt.compareSync(nik, user.nik));
-    // const user = await User.findOne({ where: { nik: nik } });
-
-    if (!user) {
-      return res.status(401).send({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid password",
-      });
-    }
-
-    const token = generateToken({ id: user.id, role: "user" });
-
-    res.status(200).send({
-      success: true,
-      message: "Login successful",
-      data: { token, user },
-    });
-  } catch (error) {
-    console.error("Error during login", error);
-    res.status(500).send({
-      message: error.message,
-    });
-  }
-};
-
 // @desc    Get all users
 // @route   GET /api/v1/users
 // @access   Admin
