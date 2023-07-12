@@ -23,9 +23,6 @@ exports.voteCandidate = async (req, res) => {
 
     const hashedCandidateNo = encryptText(id);
 
-    console.log("privateKey: " + privateKey);
-    console.log("hashedCandidateNo: " + hashedCandidateNo);
-
     const tx = await userContractInstance.castVote(hashedCandidateNo);
     await tx.wait();
     res.status(200).send({
@@ -34,9 +31,9 @@ exports.voteCandidate = async (req, res) => {
       tx_data: tx,
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(400).send({
       success: false,
-      message: error.message,
+      message: error.message.message,
     });
   }
 };
@@ -46,7 +43,8 @@ exports.voteCandidate = async (req, res) => {
 // @access  user
 exports.getVoteResult = async (req, res) => {
   try {
-    // const { id } = req.params;
+    // TODO: add if condition buat check votingStatus
+
     const tx_users = await contractInstance.getAllVoters();
     const users = tx_users.map((user) => {
       const candidateNo = parseInt(
@@ -68,6 +66,7 @@ exports.getVoteResult = async (req, res) => {
         (user) => user.candidateNo === candidate.candidateNo
       ).length;
       return {
+        id: candidate.id,
         candidateNo: candidate.candidateNo,
         name: candidate.name,
         vision: candidate.vision,
@@ -75,15 +74,20 @@ exports.getVoteResult = async (req, res) => {
         voteCount: voteCount,
       };
     });
+
+    const sortedCandidates = candidates.sort(
+      (a, b) => b.voteCount - a.voteCount
+    );
+
     res.status(200).send({
       success: true,
       message: "Fetched vote result successfully",
-      data: candidates,
+      data: sortedCandidates,
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(400).send({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -100,9 +104,9 @@ exports.startVoting = async (req, res) => {
       message: "Successfully started voting",
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(400).send({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -119,9 +123,25 @@ exports.stopVoting = async (req, res) => {
       message: "Successfully started voting",
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(400).send({
       success: false,
-      message: error,
+      message: error.message,
+    });
+  }
+};
+
+exports.getVotingStatus = async (req, res) => {
+  try {
+    const tx = await contractInstance.getVotingStatus();
+    await tx.wait();
+    res.status(200).send({
+      success: true,
+      message: "Succesfully fetched voting status",
+    });
+  } catch (error) {
+    return res.status(400).send({
+      success: false,
+      message: error.message,
     });
   }
 };

@@ -5,8 +5,10 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 
-export default function MediaCard() {
+export default function ResultCard(props) {
+  const { candidate } = props;
   return (
     <Card sx={{ maxWidth: "640px", width: "100%" }}>
       <CardMedia
@@ -16,15 +18,23 @@ export default function MediaCard() {
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          Joko Widodo
+          {candidate?.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Kandidat 1
+          Kandidat {candidate?.candidateNo}
         </Typography>
-        <Typography variant="body1">Vote count: 23472</Typography>
+        <Typography variant="body1">
+          Jumlah suara: {candidate?.voteCount}
+        </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Detail</Button>
+        <Button
+          size="small"
+          component={Link}
+          to={`../candidate/${candidate?.id}`}
+        >
+          Detail
+        </Button>
       </CardActions>
     </Card>
   );
