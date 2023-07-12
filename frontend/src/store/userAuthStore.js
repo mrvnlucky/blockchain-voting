@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:5050/api/v1/users/";
+const API_URL = "http://localhost:5050/api/v1";
 
 export const useUserAuthStore = create((set) => ({
   token: null,
@@ -12,7 +12,7 @@ export const useUserAuthStore = create((set) => ({
   login: async (credentials) => {
     try {
       set({ loading: true });
-      const response = await axios.post(`${API_URL}login`, credentials);
+      const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const { token, user } = response.data.data;
       console.log(token, user);
       set({ token, user, loading: false });
@@ -32,7 +32,7 @@ export const useUserAuthStore = create((set) => ({
       const token = localStorage.getItem("token");
       if (token) {
         set({ loading: true });
-        const response = await axios.get(API_URL, {
+        const response = await axios.get(`${API_URL}/auth/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = response.data;

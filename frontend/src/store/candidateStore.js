@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "`http://localhost:5050/api/v1/candidates/`";
+const API_URL = "http://localhost:5050/api/v1";
 
 export const useCandidateStore = create((set) => ({
   candidates: [],
@@ -11,7 +11,7 @@ export const useCandidateStore = create((set) => ({
   getAllCandidates: async () => {
     try {
       set({ loading: true });
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_URL}/candidates`);
       set({ candidates: response.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -21,7 +21,7 @@ export const useCandidateStore = create((set) => ({
   getOneCandidate: async (id) => {
     try {
       set({ loading: true });
-      const response = await axios.get((API_URL, id));
+      const response = await axios.get(`${API_URL}/candidates/${id}`);
       const candidate = response.data;
       set({ candidates: [candidate], loading: false });
     } catch (error) {
@@ -32,7 +32,7 @@ export const useCandidateStore = create((set) => ({
   createCandidate: async (newCandidate) => {
     try {
       set({ loading: true });
-      const response = await axios.post(API_URL, newCandidate);
+      const response = await axios.post(`${API_URL}/candidates`, newCandidate);
       set((state) => ({
         candidates: [...state.candidates, response.data],
         loading: false,
@@ -45,7 +45,7 @@ export const useCandidateStore = create((set) => ({
   updateCandidate: async (id, updatedCandidate) => {
     try {
       set({ loading: true });
-      await axios.put((API_URL, id), updatedCandidate);
+      await axios.put(`${API_URL}/candidates/${id}`, updatedCandidate);
       set((state) => ({
         candidates: state.candidates.map((candidate) =>
           candidate.id === id ? updatedCandidate : candidate
@@ -60,11 +60,21 @@ export const useCandidateStore = create((set) => ({
   deleteCandidate: async (id) => {
     try {
       set({ loading: true });
-      await axios.delete((API_URL, id));
+      await axios.delete(`${API_URL}/candidates/${id}`);
       set((state) => ({
         candidates: state.candidates.filter((candidate) => candidate.id !== id),
         loading: false,
       }));
+    } catch (error) {
+      set({ error: error.message, loading: false });
+    }
+  },
+
+  getVoteResult: async () => {
+    try {
+      set({ loading: true });
+      const response = await axios.get(`${API_URL}/vote/result`);
+      set({ candidates: response.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
     }

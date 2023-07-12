@@ -3,14 +3,24 @@ import axios from "axios";
 const API_URL = "http://localhost:5050/api/v1";
 
 export const useUserStore = create((set) => ({
-  users: [],
+  results: [],
   loading: false,
   error: null,
+
+  getResult: async () => {
+    try {
+      set({ loading: true });
+      const response = await axios.get(`${API_URL}result`);
+      set({ results: response.data, loading: false });
+    } catch (error) {
+      set({ error: error.message, loading: false });
+    }
+  },
 
   getAllUsers: async () => {
     try {
       set({ loading: true });
-      const response = await axios.get(`${API_URL}/users`);
+      const response = await axios.get(API_URL);
       set({ users: response.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -20,7 +30,7 @@ export const useUserStore = create((set) => ({
   getOneUser: async (id) => {
     try {
       set({ loading: true });
-      const response = await axios.get(`${API_URL}/users/${id}`);
+      const response = await axios.get((API_URL, id));
       const user = response.data;
       set({ users: [user], loading: false });
     } catch (error) {
@@ -31,7 +41,7 @@ export const useUserStore = create((set) => ({
   createUser: async (newUser) => {
     try {
       set({ loading: true });
-      const response = await axios.post(`${API_URL}/users`, newUser);
+      const response = await axios.post(API_URL, newUser);
       set((state) => ({
         users: [...state.users, response.data],
         loading: false,
@@ -44,7 +54,7 @@ export const useUserStore = create((set) => ({
   updateUser: async (id, updatedUser) => {
     try {
       set({ loading: true });
-      await axios.put(`${API_URL}/users/${id}`, updatedUser);
+      await axios.put((API_URL, id), updatedUser);
       set((state) => ({
         users: state.users.map((candidate) =>
           candidate.id === id ? updatedUser : candidate
@@ -59,7 +69,7 @@ export const useUserStore = create((set) => ({
   deleteUser: async (id) => {
     try {
       set({ loading: true });
-      await axios.delete(`${API_URL}/users/${id}`);
+      await axios.delete((API_URL, id));
       set((state) => ({
         users: state.users.filter((candidate) => candidate.id !== id),
         loading: false,
