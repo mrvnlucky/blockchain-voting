@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,24 +11,29 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Link } from "react-router-dom";
-
-const pages = [
-  {
-    name: "Daftar Kandidat",
-    url: "",
-  },
-  {
-    name: "Hasil Akhir",
-    url: "hasil-akhir",
-  },
-];
-
-const settings = ["Suara Saya", "Logout"];
+import { Link, useNavigate } from "react-router-dom";
+import { useUserAuthStore } from "../store/userAuthStore";
 
 export default function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
+  const { token, user, loading, error, logout, checkAuth } = useUserAuthStore();
+  const pages = [
+    { name: "Daftar Kandidat", action: () => navigate("/", { replace: true }) },
+    {
+      name: "Hasil Akhir",
+      action: () => navigate("/hasil", { replace: true }),
+    },
+  ];
+
+  const settings = [
+    {
+      name: "Suara Saya",
+      action: () => navigate("/me", { replace: true }),
+    },
+    { name: "Logout", action: () => logout() },
+  ];
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -99,8 +104,7 @@ export default function ResponsiveAppBar() {
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography
                     textAlign="center"
-                    component={Link}
-                    to={page.url}
+                    onClick={page.action}
                     sx={{ textDecoration: "none", color: "inherit" }}
                   >
                     {page.name}
@@ -114,7 +118,6 @@ export default function ResponsiveAppBar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -132,9 +135,7 @@ export default function ResponsiveAppBar() {
             {pages.map((page) => (
               <Button
                 key={page.name}
-                onClick={handleCloseNavMenu}
-                component={Link}
-                to={page.url}
+                onClick={(handleCloseNavMenu, page.action)}
                 sx={{
                   my: 2,
                   color: "white",
@@ -169,13 +170,13 @@ export default function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
                   <Typography
                     textAlign="center"
-                    component={Link}
+                    onClick={setting.action}
                     sx={{ textDecoration: "none", color: "inherit" }}
                   >
-                    {setting}
+                    {setting.name}
                   </Typography>
                 </MenuItem>
               ))}

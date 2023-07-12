@@ -20,8 +20,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/candidate" element={<CandidatePage />} />
-          <Route path="/hasil-akhir" element={<ResultPage />} />
+          <Route path="/candidate/:id" element={<CandidatePage />} />
+          <Route path="/hasil" element={<ResultPage />} />
           <Route path="/su/users" element={<UserDash />} />
           <Route path="/su/candidates" element={<CandidateDash />} />
           <Route path="/su/admins" element={<AdminDash />} />
