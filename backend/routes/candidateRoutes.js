@@ -6,14 +6,14 @@ const {
   getOneCandidate,
   updateCandidate,
 } = require("../controllers/candidateController");
-const { authMiddleware } = require("../middleware/authMiddleware");
+const { adminAuthMiddleware } = require("../middleware/authMiddleware");
 
 router.get("/", getAllCandidates);
 router.get("/:id", getOneCandidate);
 
 // Routes for admin
-router.post("/", authMiddleware, createCandidate);
-router.delete("/:id", authMiddleware, deleteCandidate);
-router.put("/:id", authMiddleware, updateCandidate);
+router.post("/", adminAuthMiddleware, createCandidate);
+router.delete("/:id", adminAuthMiddleware, deleteCandidate);
+router.put("/:id", adminAuthMiddleware, updateCandidate);
 
 module.exports = router;
