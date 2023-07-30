@@ -13,20 +13,10 @@ const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 
 // Set contract ABI
 const abi =
-  require("../../contracts/artifacts/contracts/Voting.sol/Voting.json").abi;
+  require("../../contract/artifacts/contracts/Voting.sol/Voting.json").abi;
 
 // Set smart contract instance for backend
 const contractInstance = new ethers.Contract(contractAddress, abi, signer);
-
-const setUserContractInstance = (privateKey) => {
-  const userSigner = new ethers.Wallet(privateKey, provider);
-  const userContractInstance = new ethers.Contract(
-    contractAddress,
-    abi,
-    userSigner
-  );
-  return userContractInstance;
-};
 
 module.exports = {
   provider,
@@ -34,5 +24,4 @@ module.exports = {
   abi,
   contractAddress,
   contractInstance,
-  setUserContractInstance,
 };

@@ -34,18 +34,18 @@ exports.createUser = async (req, res) => {
     const hashedNik = await bcrypt.hash(nik, salt);
 
     const wallet = ethers.Wallet.createRandom();
-    const walletAddress = wallet.address;
-    const privateKey = wallet.privateKey;
-    const tx = await contractInstance.addAllowedVoter(walletAddress);
+
+    await contractInstance.addAllowedVoter(wallet.address);
+
     const tx_sendEth = {
-      to: walletAddress,
+      to: wallet.address,
       value: ethers.utils.parseEther("0.001"),
     };
 
-    const transactionSendEth = await signer.sendTransaction(tx_sendEth);
+    await signer.sendTransaction(tx_sendEth);
 
-    const hashedPrivateKey = encryptText(privateKey);
-    const hashedWalletAddress = encryptText(walletAddress);
+    const hashedPrivateKey = encryptText(wallet.privateKey);
+    const hashedWalletAddress = encryptText(wallet.address);
 
     // Create user
     const user = await User.create({
@@ -55,12 +55,12 @@ exports.createUser = async (req, res) => {
       privateKey: hashedPrivateKey,
     });
 
-    const token = generateToken({ id: user.id, role: "user" });
+    // const token = generateToken({ id: user.id, role: "user" });
 
     res.status(201).json({
       success: true,
       message: "Registration successful",
-      data: { token, user },
+      data: user,
     });
   } catch (error) {
     console.error("Error during registration", error);
@@ -112,7 +112,7 @@ exports.getAllUsers = async (req, res) => {
       data: combinedData,
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(400).send({
       success: false,
       message: error.message,
     });
@@ -125,6 +125,12 @@ exports.getAllUsers = async (req, res) => {
 exports.getOneUser = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).send({
+        success: false,
+        message: "Please select a user.",
+      });
+    }
     const user = await User.findOne({ where: { id: id } });
     res.status(200).json({
       success: true,
@@ -144,10 +150,10 @@ exports.getOneUser = async (req, res) => {
 // @access  Admin
 exports.updateUser = async (req, res) => {
   try {
-    const { candidateNo, name, vision, mission } = req.body;
-    const { id } = req.params;
-    const user = users.find((user) => bcrypt.compareSync(id, user.nik));
-    // const user = await User.findOne({ where: { id: id } });
+    const { password } = req.body;
+
+    const user = await User.findOne({ where: { id: id } });
+
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -157,12 +163,9 @@ exports.updateUser = async (req, res) => {
 
     const updatedUser = await User.update(
       {
-        candidateNo: candidateNo,
-        name: name,
-        vision: vision,
-        mission: mission,
+        password: password,
       },
-      { where: { hashedNik: user.hashedNik } }
+      { where: { id: user.id } }
     );
 
     res.status(200).json({
@@ -184,6 +187,7 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+
     const user = await User.findOne({ where: { id: id } });
     if (!user) {
       return res.status(400).send({
@@ -191,9 +195,11 @@ exports.deleteUser = async (req, res) => {
         message: "User not found.",
       });
     }
+
+    const userWalletAddress = decryptText(user.walletAddress);
+
+    await contractInstance.deleteVoter(userWalletAddress);
     await user.destroy();
-    // TODO: need to add contract instance for deleting the user via hashed wallet address that is later encrypted before sending to the smart contract to be removed.
-    // Reason: nanti kalo hapus user jadi vote nya ikut kehapus dari smart contract. kalo ga nanti bisa terjadi dimana user yang udah keapus vote nya masih keitung.
 
     res.status(200).json({
       success: true,
