@@ -15,13 +15,17 @@ export default function Homepage() {
     <Container>
       <Grid container direction={"column"}>
         <Typography>Daftar Kandidat</Typography>
-        <Grid container direction={"row"} spacing={3}>
-          {candidates.data?.map((candidate) => (
-            <Grid item md={4} sm={6} xs={12} key={candidate?.id}>
-              <CandidateCard candidate={candidate} />
-            </Grid>
-          ))}
-        </Grid>
+        {candidates.data && candidates.data.length === 0 ? (
+          <Typography>No candidates</Typography>
+        ) : (
+          <Grid container direction={"row"} spacing={3}>
+            {candidates.data?.map((candidate) => (
+              <Grid item md={4} sm={6} xs={12} key={candidate?.id}>
+                <CandidateCard candidate={candidate} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Grid>
     </Container>
   );

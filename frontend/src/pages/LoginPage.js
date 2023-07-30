@@ -14,9 +14,9 @@ export default function Login() {
   const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  // useEffect(() => {
+  //   checkAuth();
+  // }, []);
 
   const handleLogin = () => {
     const credentials = { nik, password };
