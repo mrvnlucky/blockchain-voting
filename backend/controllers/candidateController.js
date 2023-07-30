@@ -1,5 +1,7 @@
 const db = require("../models");
 const Candidate = db.Candidate;
+// const multer = require("../middleware/multer");
+const cloudinary = require("../config/cloudinary");
 
 // @desc    Add candidate
 // @route   POST /api/v1/candidates
@@ -8,11 +10,18 @@ exports.createCandidate = async (req, res) => {
   try {
     const { candidateNo, name, vision, mission } = req.body;
 
+    // console.log("oiarehagiojgioar");
+    const img = await cloudinary.uploader.upload(req.file.path, {
+      folder: "Blockvote/candidates",
+    });
+    console.log(req.file);
+
     const candidate = await Candidate.create({
       candidateNo: candidateNo,
       name: name,
       vision: vision,
       mission: mission,
+      img: img.secure_url,
     });
 
     res.status(201).send({
@@ -91,25 +100,43 @@ exports.updateCandidate = async (req, res) => {
         message: "Candidate not found",
       });
     }
-    const updatedCandidate = await Candidate.update(
-      {
-        candidateNo: candidateNo,
-        name: name,
-        vision: vision,
-        mission: mission,
-      },
-      { where: { id: id } }
-    );
 
-    res.status(200).json({
+    if (req.file) {
+      const img = await cloudinary.uploader.upload(req.file.buffer, {
+        folder: "Blockvote/candidates",
+      });
+      await Candidate.update(
+        {
+          candidateNo: candidateNo,
+          name: name,
+          vision: vision,
+          mission: mission,
+          img: img.secure_url,
+        },
+        { where: { id: id }, returning: true }
+      );
+    } else {
+      await Candidate.update(
+        {
+          candidateNo: candidateNo,
+          name: name,
+          vision: vision,
+          mission: mission,
+        },
+        { where: { id: id }, returning: true }
+      );
+    }
+    // const updatedCandidate = await Candidate.findOne({ where: { id: id } });
+
+    res.status(200).send({
       success: true,
-      message: "Candidate successfully updated!",
-      data: updatedCandidate,
+      message: "Candidate successfully updated.",
+      // data: updatedCandidate,
     });
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: error.message.message,
+      message: error.message,
     });
   }
 };
@@ -135,7 +162,7 @@ exports.deleteCandidate = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: error.message.message,
+      message: error.message,
     });
   }
 };

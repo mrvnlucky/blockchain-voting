@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("mission", JSON.stringify(value));
         },
       },
+      img: DataTypes.STRING,
     },
     {
       sequelize,
