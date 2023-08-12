@@ -6,6 +6,7 @@ const API_URL = "http://localhost:5050/api/v1";
 export const useAdminAuthStore = create((set) => ({
   token: null,
   admin: null,
+  isAuth: false,
   loading: false,
   error: null,
 
@@ -17,7 +18,7 @@ export const useAdminAuthStore = create((set) => ({
         credentials
       );
       const { token, admin } = response.data;
-      set({ token, admin, loading: false });
+      set({ token, admin, isAuth: true, loading: false });
       localStorage.setItem("token", token);
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -38,7 +39,7 @@ export const useAdminAuthStore = create((set) => ({
           headers: { Authorization: `Bearer ${token}` },
         });
         const admin = response.data;
-        set({ token, admin, loading: false });
+        set({ token, admin, isAuth: true, loading: false });
       }
     } catch (error) {
       set({ error: error.message, loading: false });

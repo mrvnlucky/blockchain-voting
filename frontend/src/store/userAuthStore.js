@@ -6,6 +6,7 @@ const API_URL = "http://localhost:5050/api/v1";
 export const useUserAuthStore = create((set) => ({
   token: null,
   user: null,
+  isAuth: false,
   loading: false,
   error: null,
 
@@ -15,7 +16,7 @@ export const useUserAuthStore = create((set) => ({
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const { token, user } = response.data.data;
       console.log(token, user);
-      set({ token, user, loading: false });
+      set({ token, user, isAuth: true, loading: false });
       localStorage.setItem("token", token);
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -23,7 +24,7 @@ export const useUserAuthStore = create((set) => ({
   },
 
   logout: () => {
-    set({ token: null, user: null });
+    set({ token: null, user: null, isAuth: false });
     localStorage.removeItem("token");
   },
 
@@ -36,7 +37,7 @@ export const useUserAuthStore = create((set) => ({
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = response.data;
-        set({ token, user, loading: false });
+        set({ token, user, isAuth: true, loading: false });
       }
     } catch (error) {
       set({ error: error.message, loading: false });
