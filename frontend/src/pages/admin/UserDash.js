@@ -1,263 +1,111 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
+import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
-import {
-  GridRowModes,
-  DataGrid,
-  GridToolbarContainer,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from "@mui/x-data-grid-generator";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const roles = ["Market", "Finance", "Development"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
+import { useEffect, useState } from "react";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AddIcon from "@mui/icons-material/Add"; // import AddIcon
 
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-];
+import { useNavigate, useParams } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
-function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
+export default function AdminDashboard() {
+  const { users, loading, error, getAllUsers, deleteUser } = useUserStore();
 
-  const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }));
-  };
+  const [refresh, setRefresh] = useState(false);
 
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
-      </Button>
-    </GridToolbarContainer>
-  );
-}
-
-export default function FullFeaturedCrudGrid() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+  useEffect(() => {
+    getAllUsers();
+    if (refresh) {
+      setRefresh(false);
     }
-  };
+  }, [refresh, getAllUsers]);
 
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
+  const navigate = useNavigate();
 
   const columns = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 80,
-      align: "left",
-      headerAlign: "left",
-      editable: true,
-    },
-    {
-      field: "joinDate",
-      headerName: "Join date",
-      type: "date",
-      width: 180,
-      editable: true,
-    },
-    {
-      field: "role",
-      headerName: "Department",
-      width: 220,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Market", "Finance", "Development"],
-    },
+    { field: "id", headerName: "ID", width: 160 },
+    { field: "nik", headerName: "NIK", width: 160 },
+    { field: "password", headerName: "Password", width: 160 },
+    { field: "walletAddress", headerName: "Wallet Address", width: 160 },
+    { field: "privateKey", headerName: "Private Key", width: 160 },
     {
       field: "actions",
-      type: "actions",
       headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
+      width: 240,
+      renderCell: (params) => (
+        <strong>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            style={{ marginLeft: 16 }}
+            startIcon={<EditIcon />}
+            onClick={() => handleEdit(params.row.id)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            size="small"
+            style={{ marginLeft: 16 }}
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </Button>
+        </strong>
+      ),
     },
   ];
 
+  const handleEdit = (id) => {
+    // Handle edit functionality
+    navigate(`${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    // Handle delete functionality
+    await deleteUser(id);
+    setRefresh(true);
+  };
+
+  const handleAdd = () => {
+    // Handle add functionality
+    navigate("add"); // navigate to add candidate page
+  };
+
   return (
-    <Box
-      sx={{
-        height: 500,
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar,
+    <Box sx={{ display: "flex" }}>
+      <AdminSidebar />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.default",
+          p: 3,
         }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-      />
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAdd}
+        >
+          Add user
+        </Button>
+        <DataGrid
+          rows={users?.data ? users.data : ""}
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+        />
+      </Box>
     </Box>
   );
 }

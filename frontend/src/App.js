@@ -11,7 +11,13 @@ import CandidateDash from "./pages/admin/CandidateDash";
 // import CandidateDash from "./pages/admin/CandidateDash_v2";
 import AdminDash from "./pages/admin/AdminDash";
 import UserDash from "./pages/admin/UserDash";
-import AdminHeader from "./components/admin/AdminHeader";
+import NewAdminPage from "./pages/admin/NewAdminPage";
+import NewCandidatePage from "./pages/admin/NewCandidatePage";
+import UpdateCandidatePage from "./pages/admin/UpdateCandidatePage";
+import NewUserPage from "./pages/admin/NewUserPage";
+import UpdateUserPage from "./pages/admin/UpdateUserPage";
+import UpdateAdminPage from "./pages/admin/UpdateAdminPage";
+import Dropzone from "./components/admin/Dropzone";
 
 function App() {
   return (
@@ -26,8 +32,15 @@ function App() {
           <Route path="/candidates/:id" element={<CandidatePage />} />
           <Route path="/hasil" element={<ResultPage />} />
           <Route path="/su/users" element={<UserDash />} />
+          <Route path="/su/users/add" element={<NewUserPage />} />
+          <Route path="/su/users/:id" element={<UpdateUserPage />} />
           <Route path="/su/candidates" element={<CandidateDash />} />
+          <Route path="/su/candidates/add" element={<NewCandidatePage />} />
+          <Route path="/su/candidates/:id" element={<UpdateCandidatePage />} />
           <Route path="/su/admins" element={<AdminDash />} />
+          <Route path="/su/admins/add" element={<NewAdminPage />} />
+          {/* <Route path="/su/admins/:id" element={<UpdateAdminPage />} /> */}
+          <Route path="/su/dropzone" element={<Dropzone />} />
         </Routes>
       </BrowserRouter>
     </div>
