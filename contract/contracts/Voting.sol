@@ -9,9 +9,9 @@ contract Voting {
 
     struct Voter {
         address voterAddress;
+        bool isAllowed;
         bool isVoted;
         string hashedCandidateNo;
-        bool isAllowed;
     }
     mapping(address => Voter) private voters;
     address[] private voterAddresses;
@@ -61,19 +61,13 @@ contract Voting {
         return isVotingRunning;
     }
 
-    function startVoting() public onlyAdmin {
-        require(isVotingRunning == false, "Voting is running.");
-
+    function startVoting() public onlyAdmin onlyVotingStopped {
         isVotingRunning = true;
-
         emit VotingStarted();
     }
 
-    function stopVoting() public onlyAdmin {
-        require(isVotingRunning == true, "Voting is stopped.");
-
+    function stopVoting() public onlyAdmin onlyVotingRunning {
         isVotingRunning = false;
-
         emit VotingStopped();
     }
 
@@ -109,6 +103,13 @@ contract Voting {
             allVoters[i] = voters[voterAddresses[i]];
         }
         return allVoters;
+    }
+
+    function getMyVote(
+        address _voterAddress
+    ) public view returns (string memory) {
+        require(voters[_voterAddress].isAllowed, "Voter is not allowed.");
+        return voters[_voterAddress].hashedCandidateNo;
     }
 
     function deleteVoter(address _voterAddress) public onlyAdmin {
