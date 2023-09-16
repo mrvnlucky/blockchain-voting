@@ -12,9 +12,17 @@ export const useCandidateStore = create((set) => ({
     try {
       set({ loading: true });
       const response = await axios.get(`${API_URL}/candidates`);
-      set({ candidates: response.data, loading: false });
+      const candidates = response.data;
+      set({
+        candidates: candidates,
+        loading: false,
+      });
     } catch (error) {
-      set({ error: error.message, loading: false });
+      set({
+        error: error.message,
+        loading: false,
+      });
+      throw error;
     }
   },
 
@@ -23,29 +31,59 @@ export const useCandidateStore = create((set) => ({
       set({ loading: true });
       const response = await axios.get(`${API_URL}/candidates/${id}`);
       const candidate = response.data;
-      set({ candidates: [candidate], loading: false });
+      set({
+        candidates: [candidate],
+        loading: false,
+      });
+      return candidate;
     } catch (error) {
-      set({ error: error.message, loading: false });
+      set({
+        error: error.message,
+        loading: false,
+      });
+      console.error(error);
+      throw error;
     }
   },
 
   createCandidate: async (newCandidate) => {
     try {
       set({ loading: true });
-      const response = await axios.post(`${API_URL}/candidates`, newCandidate);
+      const response = await axios.post(`${API_URL}/candidates`, newCandidate, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      // const response = await axios.post(`${API_URL}/candidates`, newCandidate, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
       set((state) => ({
         candidates: [...state.candidates, response.data],
         loading: false,
       }));
     } catch (error) {
-      set({ error: error.message, loading: false });
+      set({
+        error: error.message,
+        loading: false,
+      });
     }
   },
 
   updateCandidate: async (id, updatedCandidate) => {
     try {
       set({ loading: true });
-      await axios.put(`${API_URL}/candidates/${id}`, updatedCandidate);
+      await axios.put(`${API_URL}/candidates/${id}`, updatedCandidate, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      // await axios.put(`${API_URL}/candidates/${id}`, updatedCandidate, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
       set((state) => ({
         candidates: state.candidates.map((candidate) =>
           candidate.id === id ? updatedCandidate : candidate
@@ -74,7 +112,9 @@ export const useCandidateStore = create((set) => ({
     try {
       set({ loading: true });
       const response = await axios.get(`${API_URL}/vote/result`);
-      set({ candidates: response.data, loading: false });
+      const candidates = response.data;
+      set({ candidates: candidates, loading: false });
+      return candidates;
     } catch (error) {
       set({ error: error.message, loading: false });
     }

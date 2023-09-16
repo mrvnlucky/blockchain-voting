@@ -10,11 +10,17 @@ import { Link } from "react-router-dom";
 export default function CandidateCard(props) {
   const { candidate } = props;
   return (
-    <Card sx={{ maxWidth: "360px" }}>
+    <Card
+      sx={{
+        width: "100%",
+      }}
+    >
       <CardMedia
-        sx={{ height: "240px" }}
-        image="https://dummyimage.com/400.jpg"
-        title="Foto kandidat 1"
+        sx={{
+          minHeight: "240px",
+        }}
+        image={candidate ? candidate?.img : "https://dummyimage.com/400.jpg"}
+        title={"Foto kandidat " + candidate.candidateNo}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component={"div"}>
@@ -25,10 +31,16 @@ export default function CandidateCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
+        {/* TODO: Need to add onclick function for voting */}
+        {/* TODO: Need optional chaining for vote button available or not  */}
         <Button size="small" component={Link} to="#">
           Vote
         </Button>
-        <Button size="small" component={Link} to={`candidate/${candidate?.id}`}>
+        <Button
+          size="small"
+          component={Link}
+          to={`candidates/${candidate?.id}`}
+        >
           Detail
         </Button>
       </CardActions>
