@@ -6,27 +6,27 @@ import CandidateCard from "../components/CandidateCard";
 import { useCandidateStore } from "../store/candidateStore";
 
 export default function Homepage() {
-  const { candidates, loading, error, getAllCandidates } = useCandidateStore();
+  const { token, candidates, loading, error, getAllCandidates } =
+    useCandidateStore();
   useEffect(() => {
     getAllCandidates();
   }, []);
 
   return (
-    <Container>
-      <Grid container direction={"column"}>
-        <Typography>Daftar Kandidat</Typography>
-        {candidates.data && candidates.data.length === 0 ? (
-          <Typography>No candidates</Typography>
-        ) : (
-          <Grid container direction={"row"} spacing={3}>
-            {candidates.data?.map((candidate) => (
-              <Grid item md={4} sm={6} xs={12} key={candidate?.id}>
-                <CandidateCard candidate={candidate} />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Grid>
+    <Container maxWidth="lg">
+      <Typography>Daftar Kandidat</Typography>
+
+      {candidates.data && candidates.data.length === 0 ? (
+        <Typography>No candidates</Typography>
+      ) : (
+        <Grid container direction={"row"} spacing={2}>
+          {candidates.data?.map((candidate, index) => (
+            <Grid item md={4} sm={6} xs={12} key={index}>
+              <CandidateCard candidate={candidate} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 }

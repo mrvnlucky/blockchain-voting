@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useCandidateStore } from "../store/candidateStore";
 import { useParams } from "react-router-dom";
 
-export default function Candidate() {
+export default function CandidatePage() {
   const { candidates, loading, error, getOneCandidate } = useCandidateStore();
   console.log(candidates);
   const { id } = useParams();

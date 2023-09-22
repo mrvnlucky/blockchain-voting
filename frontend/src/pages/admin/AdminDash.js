@@ -6,14 +6,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import AdminSidebar from "../../components/admin/AdminSidebar";
 import AddIcon from "@mui/icons-material/Add"; // import AddIcon
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAdminStore } from "../../store/adminStore";
-import { Container } from "@mui/material";
 
-export default function AdminDashboard() {
+export default function AdminDash() {
   const { admins, loading, error, getAllAdmins, deleteAdmin } = useAdminStore();
   const [refresh, setRefresh] = useState(false);
 
@@ -79,7 +77,6 @@ export default function AdminDashboard() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AdminSidebar />
       <Box
         component="main"
         sx={{

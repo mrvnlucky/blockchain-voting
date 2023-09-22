@@ -11,34 +11,34 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useUserStore } from "../../store/userStore";
+import { useAdminStore } from "../../store/adminStore";
 import { useNavigate, useParams } from "react-router-dom";
 
-const UpdateUserPage = () => {
+const AdminUpdatePage = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { updateUser, getOneUser, users, loading, error } = useUserStore();
+  const { updateAdmin, getOneAdmin, admins, loading, error } = useAdminStore();
 
-  const [nik, setNik] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchAdmin = async () => {
       try {
-        const user = await getOneUser(id);
-        setNik(user?.data?.nik);
-        setPassword(user?.data?.password);
-        setVerifyPassword(user?.data?.password);
+        const admin = await getOneAdmin(id);
+        setUsername(admin?.data?.nik);
+        setPassword(admin?.data?.password);
+        setVerifyPassword(admin?.data?.password);
         // Set other form fields based on candidate data
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchUser();
+    fetchAdmin();
   }, []);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -50,10 +50,9 @@ const UpdateUserPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = { nik, password, verifyPassword };
-    console.log(data);
-    updateUser(data);
-    navigate("/su/users");
+    const data = { username, password, verifyPassword };
+    updateAdmin(data);
+    navigate("/su/admins");
     // Handle form submission logic here
   };
 
@@ -76,13 +75,13 @@ const UpdateUserPage = () => {
           fontFamily="Roboto"
           align="center"
         >
-          Update User
+          Update Admin
         </Typography>
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
-            label="NIK"
-            value={nik}
-            onChange={(e) => setNik(e.target.value)}
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             sx={{ width: "100%" }}
           />
         </Box>
@@ -148,4 +147,4 @@ const UpdateUserPage = () => {
   );
 };
 
-export default UpdateUserPage;
+export default AdminUpdatePage;

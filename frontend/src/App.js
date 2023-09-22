@@ -1,46 +1,155 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import CandidatePage from "./pages/CandidatePage";
 import { CssBaseline } from "@mui/material";
-import Header from "./components/Header";
 import LoginPage from "./pages/LoginPage";
 import ResultPage from "./pages/ResultPage";
 import CandidateDash from "./pages/admin/CandidateDash";
-// import CandidateDash from "./pages/admin/CandidateDash_v2";
 import AdminDash from "./pages/admin/AdminDash";
 import UserDash from "./pages/admin/UserDash";
-import NewAdminPage from "./pages/admin/NewAdminPage";
-import NewCandidatePage from "./pages/admin/NewCandidatePage";
-import UpdateCandidatePage from "./pages/admin/UpdateCandidatePage";
-import NewUserPage from "./pages/admin/NewUserPage";
-import UpdateUserPage from "./pages/admin/UpdateUserPage";
-import UpdateAdminPage from "./pages/admin/UpdateAdminPage";
-import Dropzone from "./components/admin/Dropzone";
+import AdminNewPage from "./pages/admin/AdminNewPage";
+import CandidateNewPage from "./pages/admin/CandidateNewPage";
+import CandidateUpdatePage from "./pages/admin/CandidateUpdatePage";
+import UserNewPage from "./pages/admin/UserNewPage";
+import UserUpdatePage from "./pages/admin/UserUpdatePage";
+import AdminUpdatePage from "./pages/admin/AdminUpdatePage";
+import AdminLoginPage from "./pages/admin/AdminLoginPage";
+import NormalLayout from "./layouts/NormalLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
     <div className="App">
       <CssBaseline />
+
       <BrowserRouter>
-        <Header />
-        {/* <AdminHeader /> */}
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/candidates/:id" element={<CandidatePage />} />
-          <Route path="/hasil" element={<ResultPage />} />
-          <Route path="/su/users" element={<UserDash />} />
-          <Route path="/su/users/add" element={<NewUserPage />} />
-          <Route path="/su/users/:id" element={<UpdateUserPage />} />
-          <Route path="/su/candidates" element={<CandidateDash />} />
-          <Route path="/su/candidates/add" element={<NewCandidatePage />} />
-          <Route path="/su/candidates/:id" element={<UpdateCandidatePage />} />
-          <Route path="/su/admins" element={<AdminDash />} />
-          <Route path="/su/admins/add" element={<NewAdminPage />} />
-          {/* <Route path="/su/admins/:id" element={<UpdateAdminPage />} /> */}
-          <Route path="/su/dropzone" element={<Dropzone />} />
+          <Route
+            path="/"
+            element={
+              <NormalLayout>
+                <HomePage />
+              </NormalLayout>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <NormalLayout>
+                <LoginPage />
+              </NormalLayout>
+            }
+          />
+          <Route
+            path="/candidates/:id"
+            element={
+              <NormalLayout>
+                <CandidatePage />
+              </NormalLayout>
+            }
+          />
+          <Route
+            path="/hasil"
+            element={
+              <NormalLayout>
+                <ResultPage />
+              </NormalLayout>
+            }
+          />
+          <Route path="/su/login" element={<AdminLoginPage />} />
+          <Route
+            path="/su/users"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <UserDash />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/users/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <UserNewPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/users/:id"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <UserUpdatePage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/candidates"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <CandidateDash />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/candidates/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <CandidateNewPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/candidates/:id"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <CandidateUpdatePage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/admins"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminDash />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/admins/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminNewPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/admins/:id"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminUpdatePage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

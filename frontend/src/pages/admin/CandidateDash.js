@@ -7,12 +7,11 @@ import AddIcon from "@mui/icons-material/Add"; // import AddIcon
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import AdminSidebar from "../../components/admin/AdminSidebar";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCandidateStore } from "../../store/candidateStore";
 
-export default function AdminDashboard() {
+export default function CandidateDash() {
   const [refresh, setRefresh] = useState(false);
   const { candidates, loading, error, getAllCandidates, deleteCandidate } =
     useCandidateStore();
@@ -82,7 +81,6 @@ export default function AdminDashboard() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AdminSidebar />
       <Box
         component="main"
         sx={{

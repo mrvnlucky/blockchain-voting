@@ -5,12 +5,14 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useCandidateStore } from "../../store/candidateStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const NewCandidatePage = () => {
+const CandidateUpdatePage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { updateCandidate, getOneCandidate, candidates, loading, error } =
+    useCandidateStore();
 
-  const { createCandidate } = useCandidateStore();
   const [candidateNo, setCandidateNo] = useState("");
   const [name, setName] = useState("");
   const [vision, setVision] = useState("");
@@ -18,15 +20,29 @@ const NewCandidatePage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    setSelectedImage(selectedImage);
-  }, [selectedImage]);
+    const fetchCandidate = async () => {
+      try {
+        const candidate = await getOneCandidate(id);
+        setCandidateNo(candidate?.data?.candidateNo);
+        setName(candidate?.data?.name);
+        setVision(candidate?.data?.vision);
+        // setMissions(candidate?.data?.mission || []);
+        setMissions([...candidate?.data?.mission]);
+        setSelectedImage(candidate?.data?.img);
+        // Set other form fields based on candidate data
+      } catch (error) {
+        // Handle error
+        console.error(error);
+      }
+    };
+
+    fetchCandidate();
+  }, []);
 
   const handleMissionChange = (index, value) => {
     const updateMissions = [...missions];
     updateMissions[index] = value;
-    // console.log(updateMissions);
     setMissions(updateMissions);
-    // console.log(missions);
   };
 
   const handleImageChange = (event) => {
@@ -34,37 +50,29 @@ const NewCandidatePage = () => {
   };
 
   const handleAddMission = () => {
-    setMissions([...missions, ""]);
+    setMissions([...missions, [""]]);
   };
 
   const handleRemoveMission = (index) => {
     const updatedMissions = [...missions];
     updatedMissions.splice(index, 1);
     setMissions(updatedMissions);
-    console.log(updatedMissions);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const data = {
-    //   candidateNo: candidateNo,
-    //   name: name,
-    //   vision: vision,
-    //   mission: missions,
-    //   img: uploadedImage?.path,
-    // };
 
     const formData = new FormData();
     formData.append("candidateNo", candidateNo);
     formData.append("name", name);
     formData.append("vision", vision);
+    // formData.append("mission[]", missions);
     for (var i = 0; i < missions.length; i++) {
       formData.append("mission[]", missions[i]);
     }
     formData.append("img", selectedImage);
 
-    console.log(formData);
-    createCandidate(formData);
+    updateCandidate(id, formData);
     navigate("/su/candidates");
   };
 
@@ -115,7 +123,7 @@ const NewCandidatePage = () => {
             sx={{ width: "100%" }}
           />
         </Box>
-        {missions?.map((mission, index) => (
+        {/* {missions?.map((mission, index) => (
           <Box
             component={"div"}
             key={index}
@@ -129,9 +137,26 @@ const NewCandidatePage = () => {
             />
             <Button onClick={() => handleRemoveMission(index)}>Remove</Button>
           </Box>
-        ))}
+        ))} */}
+        {(Array.isArray(missions) ? missions : [missions]).map(
+          (mission, index) => (
+            <Box
+              component={"div"}
+              key={index}
+              sx={{ mt: 2, display: "flex", alignItems: "center" }}
+            >
+              <TextField
+                multiline
+                value={mission.toString()}
+                sx={{ width: "80%" }}
+                onChange={(e) => handleMissionChange(index, e.target.value)}
+              />
+              <Button onClick={() => handleRemoveMission(index)}>Remove</Button>
+            </Box>
+          )
+        )}
         <Button onClick={handleAddMission} sx={{ my: 0 }}>
-          Add Bullet Point
+          Tambah Misi
         </Button>
 
         <Box sx={{ display: "flex", justifyContent: "center", my: 0 }}>
@@ -144,4 +169,4 @@ const NewCandidatePage = () => {
   );
 };
 
-export default NewCandidatePage;
+export default CandidateUpdatePage;

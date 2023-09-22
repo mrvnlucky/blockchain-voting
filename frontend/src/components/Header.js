@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,12 +11,17 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import LoginIcon from "@mui/icons-material/Login";
 import { Link, useNavigate } from "react-router-dom";
+
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useUserAuthStore } from "../store/userAuthStore";
+import { ButtonBase, Icon } from "@mui/material";
 
 export default function ResponsiveAppBar() {
   const navigate = useNavigate();
-  const { token, user, loading, error, logout, checkAuth } = useUserAuthStore();
+  const { token, user, loading, error, logout, checkAuth, isAuth } =
+    useUserAuthStore();
   const pages = [
     { name: "Daftar Kandidat", action: () => navigate("/", { replace: true }) },
     {
@@ -32,6 +37,11 @@ export default function ResponsiveAppBar() {
     },
     { name: "Logout", action: () => logout() },
   ];
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -51,29 +61,39 @@ export default function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="sticky"
+      sx={{ position: "sticky", top: 0, zIndex: 100, marginBottom: 2 }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
-          <Typography
-            variant="h5"
-            noWrap
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".2rem",
-              color: "inherit",
-              textDecoration: "none",
+          {/* <Button variant="text" onClick={() => navigate("/")}> */}
+          <ButtonBase
+            onClick={() => {
+              navigate("/");
             }}
           >
-            BLOCKVOTE
-          </Typography>
+            <Typography
+              variant="h5"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".2rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              BLOCKVOTE
+            </Typography>
+          </ButtonBase>
+          {/* </Button> */}
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
-              size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
@@ -115,11 +135,11 @@ export default function ResponsiveAppBar() {
           </Box>
 
           {/* <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} /> */}
+
           <Typography
             variant="h6"
             noWrap
             sx={{
-              mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
@@ -149,9 +169,25 @@ export default function ResponsiveAppBar() {
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Profile Picture" />
-              </IconButton>
+              {isAuth ? (
+                <IconButton
+                  onClick={handleOpenUserMenu}
+                  sx={{ p: 0, color: "white" }}
+                >
+                  <AccountCircleIcon fontSize="large" />
+                </IconButton>
+              ) : (
+                <Button
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  variant="text"
+                  sx={{ color: "white" }}
+                >
+                  <Typography variant="button">LOGIN</Typography>
+                  <LoginIcon />
+                </Button>
+              )}
             </Tooltip>
             <Menu
               sx={{ mt: "45px" }}

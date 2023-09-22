@@ -5,14 +5,15 @@ import ResultCard from "../components/ResultCard";
 import Typography from "@mui/material/Typography";
 import { useCandidateStore } from "../store/candidateStore";
 
-export default function Result() {
+export default function ResultPage() {
   const { candidates, loading, error, getVoteResult } = useCandidateStore();
   useEffect(() => {
     getVoteResult();
-  }, []);
+  }, [getVoteResult]);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
+      <Typography>Daftar hasil</Typography>
       <Grid container direction="row" spacing={2}>
         {candidates.data?.map((candidate, index) => (
           <Grid
@@ -27,7 +28,7 @@ export default function Result() {
                     justifyContent: "center",
                   },
                 }
-              : { md: 6, sm: 6, xs: 12 })}
+              : { sm: 6, xs: 12 })}
           >
             <ResultCard candidate={candidate} />
           </Grid>

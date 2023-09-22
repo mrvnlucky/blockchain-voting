@@ -4,14 +4,13 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useUserAuthStore } from "../store/userAuthStore";
+import { useAdminAuthStore } from "../../store/adminAuthStore";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
-  const { token, user, loading, error, login, isAuth, logout, checkAuth } =
-    useUserAuthStore();
+export default function AdminLoginPage() {
+  const { error, login, isAuth, checkAuth } = useAdminAuthStore();
 
-  const [nik, setNik] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
@@ -19,12 +18,12 @@ export default function LoginPage() {
   useEffect(() => {
     checkAuth();
     if (isAuth) {
-      navigate("/");
+      navigate("/su/candidates");
     }
   }, [isAuth, navigate]);
 
   const handleLogin = () => {
-    const credentials = { nik, password };
+    const credentials = { username, password };
     login(credentials);
   };
 
@@ -38,18 +37,20 @@ export default function LoginPage() {
           fontFamily="Roboto"
           align="center"
         >
-          Masuk ke akun Anda
+          Admin Login
         </Typography>
 
         <Box component="div" sx={{ my: 2 }}>
           <TextField
-            error={error && nik === ""}
-            id="nik"
-            label="NIK"
+            error={error && username === ""}
+            id="username"
+            label="Username"
             fullWidth
-            value={nik}
-            helperText={error && nik === "" ? "Silahkan isi NIK Anda" : ""}
-            onChange={(e) => setNik(e.target.value)}
+            value={username}
+            helperText={
+              error && username === "" ? "Silahkan isi username Anda" : ""
+            }
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Box>
 
@@ -67,7 +68,6 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Box>
-
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button variant="contained" onClick={handleLogin}>
             Masuk

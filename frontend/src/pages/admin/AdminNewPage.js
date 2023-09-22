@@ -5,6 +5,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
+import FormHelperText from "@mui/material/FormHelperText";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -14,7 +15,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useAdminStore } from "../../store/adminStore";
 import { useNavigate } from "react-router-dom";
 
-const UserForm = () => {
+const AdminNewPage = () => {
   const navigate = useNavigate();
   const { createAdmin } = useAdminStore();
   const [username, setUsername] = useState("");
@@ -62,6 +63,8 @@ const UserForm = () => {
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
             label="Username"
+            error={username === ""}
+            helperText={username === "" ? "Silahkan isi nomor kandidat" : ""}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             sx={{ width: "100%" }}
@@ -73,6 +76,7 @@ const UserForm = () => {
               Password
             </InputLabel>
             <OutlinedInput
+              error={password === ""}
               value={password}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
@@ -91,6 +95,9 @@ const UserForm = () => {
               }
               label="Password"
             />
+            {password === "" && (
+              <FormHelperText error>Silahkan isi password User</FormHelperText>
+            )}
           </FormControl>
         </Box>
         <Box component={"div"} sx={{ my: 2 }}>
@@ -100,6 +107,7 @@ const UserForm = () => {
             </InputLabel>
             <OutlinedInput
               value={verifyPassword}
+              error={verifyPassword === ""}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
               onChange={(e) => setVerifyPassword(e.target.value)}
@@ -117,6 +125,11 @@ const UserForm = () => {
               }
               label="Password"
             />
+            {verifyPassword === "" && (
+              <FormHelperText error>
+                Silahkan isi ulang password User
+              </FormHelperText>
+            )}
           </FormControl>
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -129,4 +142,4 @@ const UserForm = () => {
   );
 };
 
-export default UserForm;
+export default AdminNewPage;
