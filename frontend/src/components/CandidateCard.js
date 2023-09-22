@@ -6,6 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
+import VoteButton from "./VoteButton";
 
 export default function CandidateCard(props) {
   const { candidate } = props;
@@ -33,9 +34,10 @@ export default function CandidateCard(props) {
       <CardActions>
         {/* TODO: Need to add onclick function for voting */}
         {/* TODO: Need optional chaining for vote button available or not  */}
-        <Button size="small" component={Link} to="#">
+        {/* <Button size="small" component={Link} to="#">
           Vote
-        </Button>
+        </Button> */}
+        <VoteButton candidateNo={candidate?.candidateNo} />
         <Button
           size="small"
           component={Link}
@@ -46,4 +48,5 @@ export default function CandidateCard(props) {
       </CardActions>
     </Card>
   );
+  console.log(candidate?.candidateNo);
 }

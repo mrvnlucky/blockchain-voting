@@ -9,12 +9,26 @@ import { Link } from "react-router-dom";
 
 export default function ResultCard(props) {
   const { candidate } = props;
+
   return (
-    <Card sx={{ maxWidth: "640px", width: "100%" }}>
+    <Card
+      sx={{
+        maxWidth: "800px",
+        width: "100%",
+      }}
+    >
       <CardMedia
-        sx={{ height: "360px" }}
-        image="https://dummyimage.com/400.jpg"
-        title="Foto kandidat 1"
+        sx={{
+          minHeight: "240px",
+          // width: "100%",
+        }}
+        image={
+          candidate && candidate.img
+            ? candidate.img
+            : "https://dummyimage.com/400.jpg"
+        }
+        title={"Foto Kandidat " + candidate.candidateNo}
+        component={"img"}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
@@ -31,7 +45,7 @@ export default function ResultCard(props) {
         <Button
           size="small"
           component={Link}
-          to={`../candidate/${candidate?.id}`}
+          to={`../candidates/${candidate?.id}`}
         >
           Detail
         </Button>
