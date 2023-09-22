@@ -8,16 +8,13 @@ const {
 } = require("../controllers/candidateController");
 const { adminAuthMiddleware } = require("../middleware/authMiddleware");
 const upload = require("../middleware/multer");
+
 router.get("/", getAllCandidates);
 router.get("/:id", getOneCandidate);
 
 // Routes for admin
-// router.post("/", adminAuthMiddleware, upload.single("img"), createCandidate);
-// router.delete("/:id", adminAuthMiddleware, deleteCandidate);
-// router.put("/:id", adminAuthMiddleware, upload.single("img"), updateCandidate);
-
-router.post("/", upload.single("img"), createCandidate);
-router.delete("/:id", deleteCandidate);
-router.put("/:id", upload.single("img"), updateCandidate);
+router.post("/", adminAuthMiddleware, upload.single("img"), createCandidate);
+router.delete("/:id", adminAuthMiddleware, deleteCandidate);
+router.put("/:id", adminAuthMiddleware, upload.single("img"), updateCandidate);
 
 module.exports = router;

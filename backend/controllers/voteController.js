@@ -22,7 +22,7 @@ exports.voteCandidate = async (req, res) => {
     if (!candidateExists) {
       return res.status(400).send({
         success: false,
-        message: "Please select candidate",
+        message: "Silahkan pilih kandidat",
       });
     }
 
@@ -40,13 +40,13 @@ exports.voteCandidate = async (req, res) => {
 
     res.status(200).send({
       success: true,
-      message: "Vote successful",
+      message: "Pemilihan berhasil",
     });
   } catch (error) {
     if (error.message.includes("You have already voted.")) {
       return res.status(400).send({
         success: false,
-        message: "You have already voted.",
+        message: "Kamu sudah memilih",
       });
     } else {
       return res.status(400).send({
@@ -62,19 +62,11 @@ exports.voteCandidate = async (req, res) => {
 // @access  user
 exports.getVoteResult = async (req, res) => {
   try {
-    // const isVotingRunning = await contractInstance.getVotingStatus();
-    // if (isVotingRunning)
-    //   return res.status(400).send({
-    //     success: false,
-    //     message: "Voting is still running. Wait for it to finish",
-    //   });
-
     const tx_users = await contractInstance.getAllVoters();
     const users = tx_users.map((user) => {
       const candidateNo = parseInt(
         user.hashedCandidateNo !== "" ? decryptText(user.hashedCandidateNo) : ""
       );
-      console.log(decryptText(user.hashedCandidateNo));
       return {
         voterAddress: user.voterAddress,
         isVoted: user.isVoted,
@@ -96,17 +88,21 @@ exports.getVoteResult = async (req, res) => {
         name: candidate.name,
         vision: candidate.vision,
         mission: candidate.mission,
+        img: candidate.img,
         voteCount: voteCount,
       };
     });
 
-    const sortedCandidates = candidates.sort(
-      (a, b) => b.voteCount - a.voteCount
-    );
+    const sortedCandidates = candidates.sort((a, b) => {
+      if (b.voteCount === a.voteCount) {
+        return a.candidateNo - b.candidateNo;
+      }
+      return b.voteCount - a.voteCount;
+    });
 
     res.status(200).send({
       success: true,
-      message: "Fetched vote result successfully",
+      message: "Berhasil mengambil data hasil akhir",
       data: sortedCandidates,
     });
   } catch (error) {
@@ -126,13 +122,13 @@ exports.startVoting = async (req, res) => {
     await tx.wait();
     res.status(200).send({
       success: true,
-      message: "Successfully started voting",
+      message: "Berhasil memulai pemilihan",
     });
   } catch (error) {
     if (error.message.includes("Voting is already running.")) {
       return res.status(400).send({
         success: false,
-        message: "Voting is already running.",
+        message: "Pemilihan sedang berjalan",
       });
     } else {
       return res.status(400).send({
@@ -152,13 +148,13 @@ exports.stopVoting = async (req, res) => {
     await tx.wait();
     res.status(200).send({
       success: true,
-      message: "Successfully stopped voting",
+      message: "Berhasil menghentikan pemilihan",
     });
   } catch (error) {
     if (error.message.includes("Voting is already stopped")) {
       return res.status(400).send({
         success: false,
-        message: "Voting is already stopped.",
+        message: "Pemilihan sedang tidak berjalan",
       });
     } else {
       return res.status(400).send({
@@ -174,8 +170,31 @@ exports.getVotingStatus = async (req, res) => {
     const tx = await contractInstance.getVotingStatus();
     res.status(200).send({
       success: true,
-      message: "Successfully fetched voting status",
+      message: "Berhasil mengambil statu pemilihan",
       data: tx,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getMyVote = async (req, res) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.data.id } });
+    const userAddress = decryptText(user.walletAddress);
+    const tx = await contractInstance.getMyVote(userAddress);
+    const candidate = await Candidate.findOne({
+      where: { candidateNo: decryptText(tx) },
+    });
+    res.status(200).send({
+      success: true,
+      message: "Berhasil mengambil data pemilihan anda",
+      data: {
+        candidate,
+      },
     });
   } catch (error) {
     return res.status(400).send({

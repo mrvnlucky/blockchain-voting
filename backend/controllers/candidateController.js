@@ -10,11 +10,22 @@ exports.createCandidate = async (req, res) => {
   try {
     const { candidateNo, name, vision, mission } = req.body;
 
-    // console.log("oiarehagiojgioar");
+    if (!candidateNo || !name || !vision || !mission) {
+      return res.status(400).send({
+        success: false,
+        message: "Silahkan lengkapi data kandidat",
+      });
+    }
+    if (!(req.file && req.file.path)) {
+      return res.status(500).send({
+        success: false,
+        message: "Silahkan upload foto kandidat",
+      });
+    }
+
     const img = await cloudinary.uploader.upload(req.file.path, {
       folder: "Blockvote/candidates",
     });
-    console.log(req.file);
 
     const candidate = await Candidate.create({
       candidateNo: candidateNo,
@@ -26,10 +37,11 @@ exports.createCandidate = async (req, res) => {
 
     res.status(201).send({
       success: true,
-      message: "Candidate successfully created",
+      message: "Data kandidat berhasil ditambahkan",
       data: candidate,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).send({
       success: false,
       message: error.message,
@@ -42,7 +54,9 @@ exports.createCandidate = async (req, res) => {
 // @access  admin
 exports.getAllCandidates = async (req, res) => {
   try {
-    const allCandidates = await Candidate.findAll();
+    const allCandidates = await Candidate.findAll({
+      order: ["candidateNo"],
+    });
 
     const candidates = allCandidates.map((candidate) => ({
       id: candidate.id,
@@ -50,11 +64,12 @@ exports.getAllCandidates = async (req, res) => {
       name: candidate.name,
       vision: candidate.vision,
       mission: candidate.mission,
+      img: candidate.img,
     }));
 
     res.status(200).send({
       success: true,
-      message: "Successfully fetched all candidates data",
+      message: "Berhasil mengambil data kandidat",
       data: candidates,
     });
   } catch (error) {
@@ -73,9 +88,16 @@ exports.getOneCandidate = async (req, res) => {
     const { id } = req.params;
     const candidate = await Candidate.findOne({ where: { id: id } });
 
+    if (!candidate) {
+      return res.status(400).send({
+        success: false,
+        message: "Admin tidak ditemukan",
+      });
+    }
+
     res.status(200).send({
       success: true,
-      message: "Successfully fetched candidate data",
+      message: "Berhasil mengambil data kandidat",
       data: candidate,
     });
   } catch (error) {
@@ -95,9 +117,9 @@ exports.updateCandidate = async (req, res) => {
     const { id } = req.params;
     const candidate = await Candidate.findOne({ where: { id: id } });
     if (!candidate) {
-      return res.status(404).send({
+      return res.status(400).send({
         success: false,
-        message: "Candidate not found",
+        message: "Kandidat tidak ditemukan",
       });
     }
 
@@ -126,12 +148,10 @@ exports.updateCandidate = async (req, res) => {
         { where: { id: id }, returning: true }
       );
     }
-    // const updatedCandidate = await Candidate.findOne({ where: { id: id } });
 
     res.status(200).send({
       success: true,
-      message: "Candidate successfully updated.",
-      // data: updatedCandidate,
+      message: "Data kandidat berhasil diubah",
     });
   } catch (error) {
     res.status(400).send({
@@ -151,13 +171,13 @@ exports.deleteCandidate = async (req, res) => {
     if (!candidate) {
       return res.status(400).send({
         success: false,
-        message: "Candidate not found.",
+        message: "Kandidat tidak ditemukan",
       });
     }
-    await candidate.destroy();
+    await candidate.destroy({ where: { id: id } });
     res.status(200).json({
       success: true,
-      message: "Candidate successfully removed.",
+      message: "Data kandidat berhasil dihapus",
     });
   } catch (error) {
     res.status(500).send({

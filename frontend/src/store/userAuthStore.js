@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-
+import { toast } from "react-toastify";
 const API_URL = "http://localhost:5050/api/v1";
 
 export const useUserAuthStore = create((set) => ({
@@ -15,17 +15,58 @@ export const useUserAuthStore = create((set) => ({
       set({ loading: true });
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const { token, user } = response.data.data;
-      console.log(token, user);
-      set({ token, user, isAuth: true, loading: false });
+      set({
+        token,
+        user,
+        isAuth: true,
+        loading: false,
+      });
       localStorage.setItem("token", token);
+      toast.success(response.data.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
-      set({ error: error.message, loading: false });
+      set({
+        error: error,
+        loading: false,
+      });
+      toast.error(error?.response?.data?.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   },
 
   logout: () => {
-    set({ token: null, user: null, isAuth: false });
+    set({
+      token: null,
+      user: null,
+      isAuth: false,
+    });
     localStorage.removeItem("token");
+    toast.success("Logout berhasil", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   },
 
   checkAuth: async () => {
@@ -37,10 +78,18 @@ export const useUserAuthStore = create((set) => ({
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = response.data;
-        set({ token, user, isAuth: true, loading: false });
+        set({
+          token,
+          user,
+          isAuth: true,
+          loading: false,
+        });
       }
     } catch (error) {
-      set({ error: error.message, loading: false });
+      set({
+        error: error,
+        loading: false,
+      });
     }
   },
 }));

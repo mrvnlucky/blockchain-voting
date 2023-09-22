@@ -10,12 +10,19 @@ require("dotenv").config();
 // @access  Admin
 exports.createAdmin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, verifyPassword } = req.body;
 
-    if (!username || !password) {
+    if (!username || !password || !verifyPassword) {
       return res.status(400).send({
         success: false,
-        message: "Please add all required fields",
+        message: "Silahkan lengkapi username dan password",
+      });
+    }
+
+    if (password !== verifyPassword) {
+      return res.status(400).send({
+        success: false,
+        message: "Password tidak sesuai",
       });
     }
 
@@ -24,7 +31,7 @@ exports.createAdmin = async (req, res) => {
     if (adminExists) {
       return res.status(400).send({
         success: false,
-        message: "Admin already exists",
+        message: "Username sudah terdaftar",
       });
     }
 
@@ -40,10 +47,11 @@ exports.createAdmin = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Admin created successfully",
+      message: "Data admin berhasil terdaftar",
       data: admin,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -59,7 +67,7 @@ exports.getAllAdmins = async (req, res) => {
     const admins = await Admin.findAll();
     res.status(200).json({
       success: true,
-      message: "Successfully fetched all admin data",
+      message: "Berhasil mengambil data admin",
       data: admins,
     });
   } catch (error) {
@@ -74,9 +82,15 @@ exports.getOneAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     const admin = await Admin.findOne({ where: { id: id } });
+    if (!admin) {
+      return res.status(400).send({
+        success: false,
+        message: "Admin tidak ditemukan",
+      });
+    }
     res.status(200).json({
       success: true,
-      message: "Successfully fetch admin",
+      message: "Berhasil mengambil data admin",
       data: admin,
     });
   } catch (error) {
@@ -86,23 +100,57 @@ exports.getOneAdmin = async (req, res) => {
     });
   }
 };
+
+exports.updateAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    const admin = await Admin.findOne({ where: { id: id } });
+
+    if (!admin) {
+      return res.status(400).send({
+        success: false,
+        message: "Admin tidak ditemukan",
+      });
+    }
+
+    const updatedAdmin = await Admin.update(
+      {
+        username: username,
+        password: password,
+      },
+      { where: { id: admin.id } }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Data admin berhasil diubah",
+      data: updatedAdmin,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await Admin.findOne({ where: { id: id } });
-    if (!user) {
+    const admin = await Admin.findOne({ where: { id: id } });
+    if (!admin) {
       return res.status(400).send({
         success: false,
-        message: "Admin not found.",
+        message: "Admin tidak ditemukan",
       });
     }
-    await user.destroy();
-    // TODO: need to add contract instance for deleting the user via hashed wallet address that is later encrypted before sending to the smart contract to be removed.
-    // Reason: nanti kalo hapus user jadi vote nya ikut kehapus dari smart contract. kalo ga nanti bisa terjadi dimana user yang udah keapus vote nya masih keitung.
+    await admin.destroy();
 
     res.status(200).json({
       success: true,
-      message: "Admin successfully removed.",
+      message: "Data admin berhasil dihapus",
     });
   } catch (error) {
     res.status(400).send({

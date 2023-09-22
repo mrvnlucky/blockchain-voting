@@ -3,6 +3,7 @@ const User = db.User;
 const Admin = db.Admin;
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/generateToken");
+const { decryptText, encryptText } = require("../utils/encryption");
 
 // @desc    Login user
 // @route   POST /api/v1/users/login
@@ -11,35 +12,39 @@ exports.loginUser = async (req, res) => {
   try {
     const { nik, password } = req.body;
     // Check for user nik
-    const users = await User.findAll();
-    const user = users.find((user) => bcrypt.compareSync(nik, user.nik));
-    // const user = await User.findOne({ where: { nik: nik } });
 
-    if (!user) {
-      return res.status(401).send({
+    if (!nik || !password) {
+      return res.status(400).send({
         success: false,
-        message: "User not found",
+        message: "Silahkan lengkapi NIK dan password Anda",
       });
     }
 
+    const user = await User.findOne({ where: { nik: nik } });
+
     const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!user || !passwordMatch) {
+      return res.status(401).send({
+        success: false,
+        message: "Silahkan lengkapi NIK dan password Anda",
+      });
+    }
 
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid password",
+        message: "Password tidak sesuai",
       });
     }
 
     const token = generateToken({ id: user.id, role: "user" });
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
-      message: "Login successful",
+      message: "Login berhasil",
       data: { token, user },
     });
   } catch (error) {
-    console.error("Error during login", error);
     res.status(500).send({
       message: error.message,
     });
@@ -50,15 +55,15 @@ exports.checkUserAuth = async (req, res) => {
   try {
     const userId = req.user.data.id;
     const user = await User.findOne({ where: { id: userId } });
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "User authorized",
       data: user,
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: "User unauthorized",
+      message: error.message,
     });
   }
 };
@@ -73,7 +78,7 @@ exports.loginAdmin = async (req, res) => {
     if (!username || !password) {
       return res.status(400).send({
         success: false,
-        message: "Please add all required fields",
+        message: "Silahkan lengkapi username dan password Anda",
       });
     }
 
@@ -82,15 +87,15 @@ exports.loginAdmin = async (req, res) => {
     if (!admin) {
       return res.status(400).send({
         success: false,
-        message: "Invalid credentials",
+        message: "Akun admin tidak ditemukan",
       });
     }
 
     const token = generateToken({ id: admin.id, role: "admin" });
     if (admin && (await bcrypt.compare(password, admin.password))) {
-      res.send({
+      return res.send({
         success: true,
-        message: "Admin login successful",
+        message: "Login admin berhasil",
         data: { token, admin },
       });
     }
@@ -106,18 +111,16 @@ exports.checkAdminAuth = async (req, res) => {
   try {
     const adminId = req.user.data.id;
 
-    console.log(adminId);
-    console.log(req.user.data.id);
     const admin = await Admin.findOne({ where: { id: adminId } });
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Authorized",
+      message: "Admin authorized",
       data: admin,
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: "Admin credentials unauthorized",
+      message: error.message,
     });
   }
 };

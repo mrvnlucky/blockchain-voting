@@ -11,27 +11,31 @@ const { contractInstance, signer } = require("../config/blockchainConfig");
 // @access  Admin
 exports.createUser = async (req, res) => {
   try {
-    const { nik, password } = req.body;
+    const { nik, password, verifyPassword } = req.body;
     if (!nik || !password) {
       return res.status(400).send({
-        message: "Please add all required fields",
+        message: "Silahkan lengkapi NIK dan password",
+      });
+    }
+
+    if (password !== verifyPassword) {
+      return res.status(400).send({
+        message: "Password tidak sesuai",
       });
     }
 
     // Check if user exists
-    const users = await User.findAll();
-    const userExists = users.find((user) => bcrypt.compareSync(nik, user.nik));
+    const userExists = await User.findOne({ where: { nik: nik } });
     if (userExists) {
       return res.status(400).send({
         success: false,
-        message: "User already exists",
+        message: "NIK sudah terdaftar",
       });
     }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const hashedNik = await bcrypt.hash(nik, salt);
 
     const wallet = ethers.Wallet.createRandom();
 
@@ -49,21 +53,17 @@ exports.createUser = async (req, res) => {
 
     // Create user
     const user = await User.create({
-      nik: hashedNik,
+      nik: nik,
       password: hashedPassword,
       walletAddress: hashedWalletAddress,
       privateKey: hashedPrivateKey,
     });
-
-    // const token = generateToken({ id: user.id, role: "user" });
-
     res.status(201).json({
       success: true,
-      message: "Registration successful",
+      message: "Data user berhasil ditambahkan",
       data: user,
     });
   } catch (error) {
-    console.error("Error during registration", error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -89,7 +89,7 @@ exports.getAllUsers = async (req, res) => {
     const users = allUsers.map((user) => ({
       id: user.id,
       nik: user.nik,
-      password: user.nik,
+      password: user.password,
       walletAddress: user.walletAddress,
       privateKey: user.privateKey,
     }));
@@ -108,7 +108,7 @@ exports.getAllUsers = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Successfully fetch all users",
+      message: "Berhasil mengambil data user",
       data: combinedData,
     });
   } catch (error) {
@@ -128,13 +128,13 @@ exports.getOneUser = async (req, res) => {
     if (!id) {
       return res.status(400).send({
         success: false,
-        message: "Please select a user.",
+        message: "User tidak ditemukan",
       });
     }
     const user = await User.findOne({ where: { id: id } });
     res.status(200).json({
       success: true,
-      message: "Successfully fetch user",
+      message: "Berhasil mengambil data admin",
       data: user,
     });
   } catch (error) {
@@ -151,13 +151,14 @@ exports.getOneUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { password } = req.body;
+    const { id } = req.params;
 
     const user = await User.findOne({ where: { id: id } });
 
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "User not found",
+        message: "User tidak ditemukan",
       });
     }
 
@@ -170,7 +171,7 @@ exports.updateUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User successfully updated!",
+      message: "Data user berhasil diubah",
       data: updatedUser,
     });
   } catch (error) {
@@ -192,7 +193,7 @@ exports.deleteUser = async (req, res) => {
     if (!user) {
       return res.status(400).send({
         success: false,
-        message: "User not found.",
+        message: "User tidak ditemukan",
       });
     }
 
@@ -203,7 +204,7 @@ exports.deleteUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User successfully removed.",
+      message: "Data user berhasil dihapus",
     });
   } catch (error) {
     res.status(400).send({

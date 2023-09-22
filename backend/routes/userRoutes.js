@@ -9,8 +9,8 @@ const {
 const { adminAuthMiddleware } = require("../middleware/authMiddleware");
 
 // Routes for admin
-router.get("/", getAllUsers);
-router.get("/:id", getOneUser);
+router.get("/", adminAuthMiddleware, getAllUsers);
+router.get("/:id", adminAuthMiddleware, getOneUser);
 router.post("/", adminAuthMiddleware, createUser);
 router.delete("/:id", adminAuthMiddleware, deleteUser);
 router.put("/:id", adminAuthMiddleware, updateUser);
