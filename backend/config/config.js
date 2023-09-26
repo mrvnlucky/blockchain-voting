@@ -16,10 +16,10 @@ module.exports = {
     dialect: "mysql",
   },
   production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
+    username: STACKHERO_MYSQL_USER,
+    password: STACKHERO_MYSQL_PASSWORD,
+    database: STACKHERO_MYSQL_DATABASE,
+    host: STACKHERO_MYSQL_HOST,
     dialect: "mysql",
   },
 };
