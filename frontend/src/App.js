@@ -19,6 +19,7 @@ import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import NormalLayout from "./layouts/NormalLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
+import MyVotePage from "./pages/MyVotePage";
 
 function App() {
   return (
@@ -56,6 +57,14 @@ function App() {
             element={
               <NormalLayout>
                 <ResultPage />
+              </NormalLayout>
+            }
+          />
+          <Route
+            path="/me"
+            element={
+              <NormalLayout>
+                <MyVotePage />
               </NormalLayout>
             }
           />
