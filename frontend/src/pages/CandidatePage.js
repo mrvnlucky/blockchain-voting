@@ -6,15 +6,12 @@ import { useCandidateStore } from "../store/candidateStore";
 import { useParams } from "react-router-dom";
 
 export default function CandidatePage() {
-  const { candidates, loading, error, getOneCandidate } = useCandidateStore();
-  console.log(candidates);
+  const { candidate, loading, error, getOneCandidate } = useCandidateStore();
   const { id } = useParams();
   useEffect(() => {
     getOneCandidate(id);
   }, [getOneCandidate]);
 
-  const candidate = candidates[0];
-  console.log(candidate);
   const missionData = candidate?.data?.mission;
 
   return (
@@ -25,7 +22,7 @@ export default function CandidatePage() {
             <img
               src={
                 candidate
-                  ? candidate?.data.img
+                  ? candidate?.data?.img
                   : "https://dummyimage.com/400.jpg"
               }
               alt="Foto kandidat"

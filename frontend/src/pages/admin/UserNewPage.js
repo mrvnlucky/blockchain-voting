@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 const UserNewPage = () => {
   const navigate = useNavigate();
-  const { loading, error, createUser, getAllUsers } = useUserStore();
+  const { success, loading, error, createUser } = useUserStore();
   const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
@@ -34,8 +34,9 @@ const UserNewPage = () => {
     e.preventDefault();
     const data = { nik, password, verifyPassword };
     createUser(data);
-    if (error) return;
-    navigate("/su/users");
+    if (success) {
+      navigate("/su/users");
+    }
   };
 
   return (
@@ -61,12 +62,12 @@ const UserNewPage = () => {
         </Typography>
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
-            error={nik === ""}
             id="nik"
             label="NIK"
             fullWidth
             value={nik}
-            helperText={nik === "" ? "Silahkan isi NIK User" : ""}
+            error={error && nik === ""}
+            helperText={error && nik === "" ? "Silahkan isi NIK User" : ""}
             onChange={(e) => setNik(e.target.value)}
           />
         </Box>
@@ -76,7 +77,7 @@ const UserNewPage = () => {
               Password
             </InputLabel>
             <OutlinedInput
-              error={password === ""}
+              error={error && password === ""}
               value={password}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
@@ -95,7 +96,7 @@ const UserNewPage = () => {
               }
               label="Password"
             />
-            {password === "" && (
+            {error && password === "" && (
               <FormHelperText error>Silahkan isi password User</FormHelperText>
             )}
           </FormControl>
@@ -107,7 +108,7 @@ const UserNewPage = () => {
             </InputLabel>
             <OutlinedInput
               value={verifyPassword}
-              error={verifyPassword === ""}
+              error={error && verifyPassword === ""}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
               onChange={(e) => setVerifyPassword(e.target.value)}
@@ -125,7 +126,7 @@ const UserNewPage = () => {
               }
               label="Password"
             />
-            {verifyPassword === "" && (
+            {error && verifyPassword === "" && (
               <FormHelperText error>
                 Silahkan isi ulang password User
               </FormHelperText>

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 const CandidateNewPage = () => {
   const navigate = useNavigate();
 
-  const { createCandidate } = useCandidateStore();
+  const { success, loading, error, createCandidate } = useCandidateStore();
   const [candidateNo, setCandidateNo] = useState("");
   const [name, setName] = useState("");
   const [vision, setVision] = useState("");
@@ -24,9 +24,7 @@ const CandidateNewPage = () => {
   const handleMissionChange = (index, value) => {
     const updateMissions = [...missions];
     updateMissions[index] = value;
-    // console.log(updateMissions);
     setMissions(updateMissions);
-    // console.log(missions);
   };
 
   const handleImageChange = (event) => {
@@ -41,18 +39,10 @@ const CandidateNewPage = () => {
     const updatedMissions = [...missions];
     updatedMissions.splice(index, 1);
     setMissions(updatedMissions);
-    console.log(updatedMissions);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const data = {
-    //   candidateNo: candidateNo,
-    //   name: name,
-    //   vision: vision,
-    //   mission: missions,
-    //   img: uploadedImage?.path,
-    // };
 
     const formData = new FormData();
     formData.append("candidateNo", candidateNo);
@@ -63,9 +53,10 @@ const CandidateNewPage = () => {
     }
     formData.append("img", selectedImage);
 
-    console.log(formData);
     createCandidate(formData);
-    navigate("/su/candidates");
+    if (success) {
+      navigate("/su/candidates");
+    }
   };
 
   return (
@@ -94,8 +85,10 @@ const CandidateNewPage = () => {
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
             label="Nomor Kandidat"
-            error={candidateNo === ""}
-            helperText={candidateNo === "" ? "Silahkan isi nomor kandidat" : ""}
+            error={error && candidateNo === ""}
+            helperText={
+              error && candidateNo === "" ? "Silahkan isi nomor kandidat" : ""
+            }
             value={candidateNo}
             onChange={(e) => setCandidateNo(e.target.value)}
             sx={{ width: "100%" }}
@@ -104,8 +97,10 @@ const CandidateNewPage = () => {
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
             label="Nama Kandidat"
-            error={name === ""}
-            helperText={name === "" ? "Silahkan isi nama kandidat" : ""}
+            error={error && name === ""}
+            helperText={
+              error && name === "" ? "Silahkan isi nama kandidat" : ""
+            }
             value={name}
             onChange={(e) => setName(e.target.value)}
             sx={{ width: "100%" }}
@@ -114,8 +109,10 @@ const CandidateNewPage = () => {
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
             label="Visi Kandidat"
-            error={vision === ""}
-            helperText={vision === "" ? "Silahkan isi visi kandidat" : ""}
+            error={error && vision === ""}
+            helperText={
+              error && vision === "" ? "Silahkan isi visi kandidat" : ""
+            }
             value={vision}
             onChange={(e) => setVision(e.target.value)}
             sx={{ width: "100%" }}
@@ -130,8 +127,10 @@ const CandidateNewPage = () => {
             <TextField
               label={`Misi ke-${index + 1} Kandidat`}
               multiline
-              error={mission === ""}
-              helperText={mission === "" ? "Silahkan isi misi kandidat" : ""}
+              error={error && mission === ""}
+              helperText={
+                error && mission === "" ? "Silahkan isi misi kandidat" : ""
+              }
               value={mission}
               sx={{ width: "80%" }}
               onChange={(e) => handleMissionChange(index, e.target.value)}

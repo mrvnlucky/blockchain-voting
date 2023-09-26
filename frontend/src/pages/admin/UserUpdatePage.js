@@ -18,7 +18,8 @@ const UserUpdatePage = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { updateUser, getOneUser, users, loading, error } = useUserStore();
+  const { updateUser, getOneUser, users, loading, error, success } =
+    useUserStore();
 
   const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +31,6 @@ const UserUpdatePage = () => {
       try {
         const user = await getOneUser(id);
         setNik(user?.data?.nik);
-        setPassword(user?.data?.password);
-        setVerifyPassword(user?.data?.password);
         // Set other form fields based on candidate data
       } catch (error) {
         console.error(error);
@@ -51,9 +50,10 @@ const UserUpdatePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = { nik, password, verifyPassword };
-    console.log(data);
-    updateUser(data);
-    navigate("/su/users");
+    updateUser(id, data);
+    if (success) {
+      navigate("/su/users");
+    }
     // Handle form submission logic here
   };
 
@@ -79,12 +79,7 @@ const UserUpdatePage = () => {
           Update User
         </Typography>
         <Box component={"div"} sx={{ my: 2 }}>
-          <TextField
-            label="NIK"
-            value={nik}
-            onChange={(e) => setNik(e.target.value)}
-            sx={{ width: "100%" }}
-          />
+          <TextField disabled label="NIK" value={nik} sx={{ width: "100%" }} />
         </Box>
         <Box component={"div"} sx={{ my: 2 }}>
           <FormControl sx={{ width: "100%" }} variant="outlined">

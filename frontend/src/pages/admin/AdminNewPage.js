@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdminNewPage = () => {
   const navigate = useNavigate();
-  const { createAdmin } = useAdminStore();
+  const { success, loading, error, createAdmin } = useAdminStore();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
@@ -33,9 +33,10 @@ const AdminNewPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = { username, password, verifyPassword };
-    console.log(data);
     createAdmin(data);
-    navigate("/su/admins");
+    if (success) {
+      navigate("/su/admins");
+    }
     // Handle form submission logic here
   };
 
@@ -63,8 +64,8 @@ const AdminNewPage = () => {
         <Box component={"div"} sx={{ my: 2 }}>
           <TextField
             label="Username"
-            error={username === ""}
-            helperText={username === "" ? "Silahkan isi nomor kandidat" : ""}
+            error={error && username === ""}
+            helperText={error && username === "" ? "Silahkan isi username" : ""}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             sx={{ width: "100%" }}
@@ -76,7 +77,7 @@ const AdminNewPage = () => {
               Password
             </InputLabel>
             <OutlinedInput
-              error={password === ""}
+              error={error && password === ""}
               value={password}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
@@ -95,8 +96,8 @@ const AdminNewPage = () => {
               }
               label="Password"
             />
-            {password === "" && (
-              <FormHelperText error>Silahkan isi password User</FormHelperText>
+            {error && password === "" && (
+              <FormHelperText error>Silahkan isi password</FormHelperText>
             )}
           </FormControl>
         </Box>
@@ -107,7 +108,7 @@ const AdminNewPage = () => {
             </InputLabel>
             <OutlinedInput
               value={verifyPassword}
-              error={verifyPassword === ""}
+              error={error && verifyPassword === ""}
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
               onChange={(e) => setVerifyPassword(e.target.value)}
@@ -125,10 +126,8 @@ const AdminNewPage = () => {
               }
               label="Password"
             />
-            {verifyPassword === "" && (
-              <FormHelperText error>
-                Silahkan isi ulang password User
-              </FormHelperText>
+            {error && verifyPassword === "" && (
+              <FormHelperText error>Silahkan isi ulang password</FormHelperText>
             )}
           </FormControl>
         </Box>

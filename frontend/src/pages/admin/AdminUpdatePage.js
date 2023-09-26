@@ -6,6 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
+import FormHelperText from "@mui/material/FormHelperText";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -18,21 +19,19 @@ const AdminUpdatePage = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { updateAdmin, getOneAdmin, admins, loading, error } = useAdminStore();
+  const { success, updateAdmin, getOneAdmin, admins, loading, error } =
+    useAdminStore();
 
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
+  const [password, setPassword] = useState();
+  const [verifyPassword, setVerifyPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
         const admin = await getOneAdmin(id);
-        setUsername(admin?.data?.nik);
-        setPassword(admin?.data?.password);
-        setVerifyPassword(admin?.data?.password);
-        // Set other form fields based on candidate data
+        setUsername(admin?.data?.username);
       } catch (error) {
         console.error(error);
       }
@@ -51,9 +50,10 @@ const AdminUpdatePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = { username, password, verifyPassword };
-    updateAdmin(data);
-    navigate("/su/admins");
-    // Handle form submission logic here
+    updateAdmin(id, data);
+    if (success) {
+      navigate("/su/admins");
+    }
   };
 
   return (

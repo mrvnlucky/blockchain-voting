@@ -10,8 +10,14 @@ import { useNavigate, useParams } from "react-router-dom";
 const CandidateUpdatePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { updateCandidate, getOneCandidate, candidates, loading, error } =
-    useCandidateStore();
+  const {
+    updateCandidate,
+    getOneCandidate,
+    candidates,
+    loading,
+    error,
+    success,
+  } = useCandidateStore();
 
   const [candidateNo, setCandidateNo] = useState("");
   const [name, setName] = useState("");
@@ -26,16 +32,13 @@ const CandidateUpdatePage = () => {
         setCandidateNo(candidate?.data?.candidateNo);
         setName(candidate?.data?.name);
         setVision(candidate?.data?.vision);
-        // setMissions(candidate?.data?.mission || []);
         setMissions([...candidate?.data?.mission]);
         setSelectedImage(candidate?.data?.img);
-        // Set other form fields based on candidate data
       } catch (error) {
         // Handle error
         console.error(error);
       }
     };
-
     fetchCandidate();
   }, []);
 
@@ -66,14 +69,15 @@ const CandidateUpdatePage = () => {
     formData.append("candidateNo", candidateNo);
     formData.append("name", name);
     formData.append("vision", vision);
-    // formData.append("mission[]", missions);
     for (var i = 0; i < missions.length; i++) {
       formData.append("mission[]", missions[i]);
     }
     formData.append("img", selectedImage);
 
     updateCandidate(id, formData);
-    navigate("/su/candidates");
+    if (success) {
+      navigate("/su/candidates");
+    }
   };
 
   return (
@@ -123,21 +127,7 @@ const CandidateUpdatePage = () => {
             sx={{ width: "100%" }}
           />
         </Box>
-        {/* {missions?.map((mission, index) => (
-          <Box
-            component={"div"}
-            key={index}
-            sx={{ mt: 2, display: "flex", alignItems: "center" }}
-          >
-            <TextField
-              multiline
-              value={mission}
-              sx={{ width: "80%" }}
-              onChange={(e) => handleMissionChange(index, e.target.value)}
-            />
-            <Button onClick={() => handleRemoveMission(index)}>Remove</Button>
-          </Box>
-        ))} */}
+
         {(Array.isArray(missions) ? missions : [missions]).map(
           (mission, index) => (
             <Box
@@ -146,6 +136,7 @@ const CandidateUpdatePage = () => {
               sx={{ mt: 2, display: "flex", alignItems: "center" }}
             >
               <TextField
+                label={`Misi ke-${index + 1} Kandidat`}
                 multiline
                 value={mission.toString()}
                 sx={{ width: "80%" }}

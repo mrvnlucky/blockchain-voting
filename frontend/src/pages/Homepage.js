@@ -6,11 +6,10 @@ import CandidateCard from "../components/CandidateCard";
 import { useCandidateStore } from "../store/candidateStore";
 
 export default function Homepage() {
-  const { token, candidates, loading, error, getAllCandidates } =
-    useCandidateStore();
+  const { candidates, loading, error, getAllCandidates } = useCandidateStore();
   useEffect(() => {
     getAllCandidates();
-  }, []);
+  }, [getAllCandidates]);
 
   return (
     <Container maxWidth="lg">
@@ -20,7 +19,7 @@ export default function Homepage() {
         <Typography>No candidates</Typography>
       ) : (
         <Grid container direction={"row"} spacing={2}>
-          {candidates.data?.map((candidate, index) => (
+          {candidates?.data?.map((candidate, index) => (
             <Grid item md={4} sm={6} xs={12} key={index}>
               <CandidateCard candidate={candidate} />
             </Grid>
