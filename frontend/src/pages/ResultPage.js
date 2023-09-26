@@ -3,10 +3,10 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import ResultCard from "../components/ResultCard";
 import Typography from "@mui/material/Typography";
-import { useCandidateStore } from "../store/candidateStore";
+import { useVoteStore } from "../store/voteStore";
 
 export default function ResultPage() {
-  const { candidates, loading, error, getVoteResult } = useCandidateStore();
+  const { candidates, loading, error, getVoteResult } = useVoteStore();
   useEffect(() => {
     getVoteResult();
   }, [getVoteResult]);

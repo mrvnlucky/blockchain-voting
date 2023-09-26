@@ -48,5 +48,4 @@ export default function CandidateCard(props) {
       </CardActions>
     </Card>
   );
-  console.log(candidate?.candidateNo);
 }

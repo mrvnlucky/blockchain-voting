@@ -1,9 +1,9 @@
 import Button from "@mui/material/Button";
 import React from "react";
-import { useCandidateStore } from "../store/candidateStore";
+import { useVoteStore } from "../store/voteStore";
 
 function VoteButton(props) {
-  const { voteCandidate } = useCandidateStore();
+  const { voteCandidate } = useVoteStore();
   const { candidateNo } = props;
 
   const handleVote = (e) => {
