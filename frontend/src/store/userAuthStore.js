@@ -15,6 +15,7 @@ export const useUserAuthStore = create((set) => ({
       set({ loading: true });
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const { token, user } = response.data.data;
+
       set({
         token,
         user,
