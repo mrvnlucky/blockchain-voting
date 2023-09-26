@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-require("dotenv").config({ path: "../../.env" });
+require("dotenv").config({ path: "../.env" });
 
 // Set encryption algorith
 const algorithm = "aes-256-cbc";
