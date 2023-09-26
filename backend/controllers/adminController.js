@@ -3,6 +3,7 @@ const db = require("../models");
 const Admin = db.Admin;
 
 const bcrypt = require("bcrypt");
+const { encryptText } = require("../utils/encryption");
 require("dotenv").config();
 
 // @desc    Add new admin account
@@ -71,6 +72,7 @@ exports.getAllAdmins = async (req, res) => {
       data: admins,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).send({
       success: false,
       message: error.message,
@@ -94,6 +96,7 @@ exports.getOneAdmin = async (req, res) => {
       data: admin,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -114,11 +117,14 @@ exports.updateAdmin = async (req, res) => {
         message: "Admin tidak ditemukan",
       });
     }
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const updatedAdmin = await Admin.update(
       {
         username: username,
-        password: password,
+        password: hashedPassword,
       },
       { where: { id: admin.id } }
     );
@@ -129,6 +135,7 @@ exports.updateAdmin = async (req, res) => {
       data: updatedAdmin,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -153,6 +160,7 @@ exports.deleteAdmin = async (req, res) => {
       message: "Data admin berhasil dihapus",
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,

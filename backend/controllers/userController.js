@@ -1,7 +1,6 @@
 const db = require("../models");
 const User = db.User;
 const bcrypt = require("bcrypt");
-const { generateToken } = require("../utils/generateToken");
 const { ethers } = require("ethers");
 const { decryptText, encryptText } = require("../utils/encryption");
 const { contractInstance, signer } = require("../config/blockchainConfig");
@@ -38,7 +37,6 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const wallet = ethers.Wallet.createRandom();
-
     await contractInstance.addAllowedVoter(wallet.address);
 
     const tx_sendEth = {
@@ -50,7 +48,6 @@ exports.createUser = async (req, res) => {
 
     const hashedPrivateKey = encryptText(wallet.privateKey);
     const hashedWalletAddress = encryptText(wallet.address);
-
     // Create user
     const user = await User.create({
       nik: nik,
@@ -64,6 +61,7 @@ exports.createUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -112,6 +110,7 @@ exports.getAllUsers = async (req, res) => {
       data: combinedData,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -138,6 +137,8 @@ exports.getOneUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).send({
       success: false,
       message: error.message,
@@ -161,10 +162,13 @@ exports.updateUser = async (req, res) => {
         message: "User tidak ditemukan",
       });
     }
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const updatedUser = await User.update(
       {
-        password: password,
+        password: hashedPassword,
       },
       { where: { id: user.id } }
     );
@@ -175,6 +179,8 @@ exports.updateUser = async (req, res) => {
       data: updatedUser,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(400).send({
       success: false,
       message: error.message,
@@ -207,6 +213,8 @@ exports.deleteUser = async (req, res) => {
       message: "Data user berhasil dihapus",
     });
   } catch (error) {
+    console.error(error);
+
     res.status(400).send({
       success: false,
       message: error.message,

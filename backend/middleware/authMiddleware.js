@@ -11,6 +11,7 @@ exports.authMiddleware = (req, res, next) => {
 
     // Attach the user payload to the request object
     req.user = decodedToken;
+
     if (req.user.data.role !== "user") {
       return res.status(401).json({
         message: "Authentication failed",
