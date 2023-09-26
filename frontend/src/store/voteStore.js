@@ -2,20 +2,13 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API_URL = "http://localhost:5050/api/v1";
+const API_URL = process.env.REACT_APP_API_URL;
 
-const adminToken = localStorage.getItem("adminToken");
 const userToken = localStorage.getItem("token");
 
-const userConfig = {
+const config = {
   headers: {
     Authorization: `Bearer ${userToken}`,
-  },
-};
-
-const admninConfig = {
-  headers: {
-    Authorization: `Bearer ${adminToken}`,
   },
 };
 
@@ -36,7 +29,7 @@ export const useVoteStore = create((set) => ({
       const response = await axios.post(
         `${API_URL}/vote/cast/${id}`,
         {},
-        userConfig
+        config
       );
       set({
         loading: false,
@@ -78,7 +71,7 @@ export const useVoteStore = create((set) => ({
         error: null,
         loading: true,
       });
-      const response = await axios.get(`${API_URL}/vote/me`, userConfig);
+      const response = await axios.get(`${API_URL}/vote/me`, config);
       set({
         candidate: response.data,
         loading: false,

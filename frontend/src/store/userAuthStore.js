@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-toastify";
-const API_URL = "http://localhost:5050/api/v1";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 export const useUserAuthStore = create((set) => ({
   token: null,
