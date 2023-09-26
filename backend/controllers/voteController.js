@@ -4,9 +4,7 @@ const Candidate = db.Candidate;
 require("dotenv").config();
 const { contractInstance } = require("../config/blockchainConfig");
 const { setUserContractInstance } = require("../utils/walletService");
-
 const { encryptText, decryptText } = require("../utils/encryption");
-const e = require("express");
 
 // @desc    Vote candidate
 // @route   POST /api/v1/vote/:id
@@ -43,6 +41,7 @@ exports.voteCandidate = async (req, res) => {
       message: "Pemilihan berhasil",
     });
   } catch (error) {
+    console.error(error);
     if (error.message.includes("You have already voted.")) {
       return res.status(400).send({
         success: false,
@@ -106,9 +105,11 @@ exports.getVoteResult = async (req, res) => {
       data: sortedCandidates,
     });
   } catch (error) {
+    console.error(error);
+
     return res.status(400).send({
       success: false,
-      message: error.message,
+      message: error,
     });
   }
 };
@@ -131,6 +132,8 @@ exports.startVoting = async (req, res) => {
         message: "Pemilihan sedang berjalan",
       });
     } else {
+      console.error(error);
+
       return res.status(400).send({
         success: false,
         message: error.message,
@@ -151,6 +154,7 @@ exports.stopVoting = async (req, res) => {
       message: "Berhasil menghentikan pemilihan",
     });
   } catch (error) {
+    console.error(error);
     if (error.message.includes("Voting is already stopped")) {
       return res.status(400).send({
         success: false,
@@ -174,6 +178,7 @@ exports.getVotingStatus = async (req, res) => {
       data: tx,
     });
   } catch (error) {
+    console.error(error);
     return res.status(400).send({
       success: false,
       message: error.message,
@@ -184,22 +189,32 @@ exports.getVotingStatus = async (req, res) => {
 exports.getMyVote = async (req, res) => {
   try {
     const user = await User.findOne({ where: { id: req.user.data.id } });
+
     const userAddress = decryptText(user.walletAddress);
+
     const tx = await contractInstance.getMyVote(userAddress);
+
     const candidate = await Candidate.findOne({
       where: { candidateNo: decryptText(tx) },
     });
+
+    if (!candidate) {
+      return res.status(400).send({
+        success: false,
+        message: "Kandidat tidak ditemukan",
+      });
+    }
+
     res.status(200).send({
       success: true,
       message: "Berhasil mengambil data pemilihan anda",
-      data: {
-        candidate,
-      },
+      data: candidate,
     });
   } catch (error) {
+    console.error(error);
     return res.status(400).send({
       success: false,
-      message: error.message,
+      message: error,
     });
   }
 };

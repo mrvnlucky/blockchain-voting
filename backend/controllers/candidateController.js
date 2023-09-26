@@ -1,6 +1,5 @@
 const db = require("../models");
 const Candidate = db.Candidate;
-// const multer = require("../middleware/multer");
 const cloudinary = require("../config/cloudinary");
 
 // @desc    Add candidate
@@ -17,7 +16,7 @@ exports.createCandidate = async (req, res) => {
       });
     }
     if (!(req.file && req.file.path)) {
-      return res.status(500).send({
+      return res.status(400).send({
         success: false,
         message: "Silahkan upload foto kandidat",
       });
@@ -42,7 +41,7 @@ exports.createCandidate = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send({
+    res.status(400).send({
       success: false,
       message: error.message,
     });
@@ -73,7 +72,8 @@ exports.getAllCandidates = async (req, res) => {
       data: candidates,
     });
   } catch (error) {
-    res.status(500).send({
+    console.error(error);
+    res.status(400).send({
       success: false,
       message: error.message,
     });
@@ -101,7 +101,8 @@ exports.getOneCandidate = async (req, res) => {
       data: candidate,
     });
   } catch (error) {
-    res.status(500).send({
+    console.error(error);
+    res.status(400).send({
       success: false,
       message: error.message,
     });
@@ -154,6 +155,7 @@ exports.updateCandidate = async (req, res) => {
       message: "Data kandidat berhasil diubah",
     });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
@@ -180,7 +182,8 @@ exports.deleteCandidate = async (req, res) => {
       message: "Data kandidat berhasil dihapus",
     });
   } catch (error) {
-    res.status(500).send({
+    console.error(error);
+    res.status(400).send({
       success: false,
       message: error.message,
     });
