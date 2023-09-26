@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
+console.log(API_URL);
 
 const token = localStorage.getItem("adminToken");
 const config = { headers: { Authorization: `Bearer ${token}` } };
