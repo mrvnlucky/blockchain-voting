@@ -28,32 +28,22 @@ export const useUserStore = create((set) => ({
         loading: false,
         success: true,
       });
-      // toast.success(response.data.message, {
-      //   position: "bottom-right",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
     } catch (error) {
       set({
         error: error,
         loading: false,
         success: false,
       });
-      // toast.error(error?.response?.data?.message, {
-      //   position: "bottom-right",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
+      toast.error(error?.response?.data?.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   },
 
@@ -71,16 +61,6 @@ export const useUserStore = create((set) => ({
         loading: false,
         success: true,
       });
-      // toast.success(response.data.message, {
-      //   position: "bottom-right",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
       return user;
     } catch (error) {
       set({
@@ -88,16 +68,16 @@ export const useUserStore = create((set) => ({
         loading: false,
         success: false,
       });
-      // toast.error(error?.response?.data?.message, {
-      //   position: "bottom-right",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
+      toast.error(error?.response?.data?.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   },
 
