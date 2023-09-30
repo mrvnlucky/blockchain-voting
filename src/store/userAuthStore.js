@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
-console.log(API_URL);
 
 export const useUserAuthStore = create((set) => ({
   token: null,
