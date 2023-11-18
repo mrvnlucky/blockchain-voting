@@ -16,14 +16,13 @@ export const useUserAuthStore = create((set) => ({
       set({ loading: true });
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const { token, user } = response.data.data;
-
       set({
         token,
         user,
         isAuth: true,
         loading: false,
       });
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
       toast.success(response.data.message, {
         position: "bottom-right",
         autoClose: 3000,
@@ -58,7 +57,7 @@ export const useUserAuthStore = create((set) => ({
       user: null,
       isAuth: false,
     });
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     toast.success("Logout berhasil", {
       position: "bottom-right",
       autoClose: 3000,
@@ -73,7 +72,7 @@ export const useUserAuthStore = create((set) => ({
 
   checkAuth: async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (token) {
         set({ loading: true });
         const response = await axios.get(`${API_URL}/auth/`, {

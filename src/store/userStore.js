@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const token = localStorage.getItem("adminToken");
+const token = sessionStorage.getItem("adminToken");
 const config = { headers: { Authorization: `Bearer ${token}` } };
 
 export const useUserStore = create((set) => ({
@@ -181,6 +181,7 @@ export const useUserStore = create((set) => ({
         loading: false,
         success: true,
       }));
+      console.log(response);
       toast.success(response.data.message, {
         position: "bottom-right",
         autoClose: 3000,

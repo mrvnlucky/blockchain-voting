@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
-const token = localStorage.getItem("adminToken");
+const token = sessionStorage.getItem("adminToken");
 const config = { headers: { Authorization: `Bearer ${token}` } };
 
 export const useAdminStore = create((set) => ({

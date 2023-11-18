@@ -25,7 +25,7 @@ export const useAdminAuthStore = create((set) => ({
         isAuth: true,
         loading: false,
       });
-      localStorage.setItem("adminToken", token);
+      sessionStorage.setItem("adminToken", token);
       toast.success(response.data.message, {
         position: "bottom-right",
         autoClose: 3000,
@@ -60,7 +60,7 @@ export const useAdminAuthStore = create((set) => ({
       admin: null,
       isAuth: false,
     });
-    localStorage.removeItem("adminToken");
+    sessionStorage.removeItem("adminToken");
     toast.success("Logout berhasil", {
       position: "bottom-right",
       autoClose: 3000,
@@ -75,7 +75,7 @@ export const useAdminAuthStore = create((set) => ({
 
   checkAuth: async () => {
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = sessionStorage.getItem("adminToken");
       if (token) {
         set({ loading: true });
         const response = await axios.get(`${API_URL}/auth/admin`, {

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const userToken = localStorage.getItem("token");
+const userToken = sessionStorage.getItem("token");
 
 const config = {
   headers: {

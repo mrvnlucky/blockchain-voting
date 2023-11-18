@@ -4,8 +4,8 @@ import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const adminToken = localStorage.getItem("adminToken");
-const userToken = localStorage.getItem("token");
+const adminToken = sessionStorage.getItem("adminToken");
+const userToken = sessionStorage.getItem("token");
 const adminConfig = {
   headers: {
     Authorization: `Bearer ${adminToken}`,
@@ -86,11 +86,13 @@ export const useCandidateStore = create((set) => ({
         newCandidate,
         adminConfig
       );
+
       set((state) => ({
         candidates: [...state.candidates, response.data],
         loading: false,
         success: true,
       }));
+
       toast.success(response.data.message, {
         position: "bottom-right",
         autoClose: 3000,
