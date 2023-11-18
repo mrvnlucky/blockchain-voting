@@ -20,6 +20,7 @@ import NormalLayout from "./layouts/NormalLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import MyVotePage from "./pages/MyVotePage";
+import StatusPage from "./pages/admin/StatusPage";
 
 function App() {
   return (
@@ -155,6 +156,16 @@ function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <AdminUpdatePage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/su/status"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <StatusPage />
                 </AdminLayout>
               </ProtectedRoute>
             }
