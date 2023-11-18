@@ -21,7 +21,7 @@ export default function UserDash() {
     if (refresh) {
       setRefresh(false);
     }
-  }, [refresh, getAllUsers]);
+  }, [getAllUsers, refresh]);
 
   const navigate = useNavigate();
 
@@ -65,6 +65,7 @@ export default function UserDash() {
   const handleEdit = (id) => {
     // Handle edit functionality
     navigate(`${id}`);
+    setRefresh(true);
   };
 
   const handleDelete = async (id) => {
@@ -76,6 +77,7 @@ export default function UserDash() {
   const handleAdd = () => {
     // Handle add functionality
     navigate("add"); // navigate to add candidate page
+    setRefresh(true);
   };
 
   return (
@@ -101,7 +103,7 @@ export default function UserDash() {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
+          // checkboxSelection
         />
       </Box>
     </Box>

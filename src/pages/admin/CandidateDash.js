@@ -2,8 +2,7 @@ import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add"; // import AddIcon
-
+import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -21,13 +20,13 @@ export default function CandidateDash() {
     if (refresh) {
       setRefresh(false);
     }
-  }, [refresh, getAllCandidates]);
+  }, [getAllCandidates, refresh]);
 
   const navigate = useNavigate();
 
   const columns = [
-    { field: "candidateNo", headerName: "Candidate No.", width: 120 },
     { field: "id", headerName: "ID", width: 160 },
+    { field: "candidateNo", headerName: "Candidate No.", width: 120 },
     { field: "name", headerName: "Name", width: 160 },
     { field: "vision", headerName: "Vision", width: 160 },
     { field: "mission", headerName: "Mission", width: 160 },
@@ -102,7 +101,7 @@ export default function CandidateDash() {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
+          // checkboxSelection
         />
       </Box>
     </Box>

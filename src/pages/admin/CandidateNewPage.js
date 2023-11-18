@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const CandidateNewPage = () => {
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
   const { success, loading, error, createCandidate } = useCandidateStore();
   const [candidateNo, setCandidateNo] = useState("");
   const [name, setName] = useState("");
@@ -54,8 +55,13 @@ const CandidateNewPage = () => {
     formData.append("img", selectedImage);
 
     createCandidate(formData);
+
     if (success) {
-      navigate("/su/candidates");
+      setIsLoading(true);
+      setTimeout(function () {
+        navigate("/su/candidates");
+        setIsLoading(false);
+      }, 5000);
     }
   };
 

@@ -99,7 +99,7 @@ const CandidateUpdatePage = () => {
           fontFamily="Roboto"
           align="center"
         >
-          Create new Candidate
+          Update Candidate
         </Typography>
         <input type="file" accept="image/*" onChange={handleImageChange} />
 

@@ -21,8 +21,9 @@ const UserNewPage = () => {
   const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   // Add more state variables for other user details
 
@@ -34,8 +35,13 @@ const UserNewPage = () => {
     e.preventDefault();
     const data = { nik, password, verifyPassword };
     createUser(data);
+
     if (success) {
-      navigate("/su/users");
+      setIsLoading(true);
+      setTimeout(function () {
+        navigate("/su/users");
+        setIsLoading(false);
+      }, 10000);
     }
   };
 

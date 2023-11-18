@@ -20,7 +20,7 @@ export default function AdminDash() {
     if (refresh) {
       setRefresh(false);
     }
-  }, [refresh, getAllAdmins]);
+  }, [getAllAdmins, refresh]);
 
   const navigate = useNavigate();
 
@@ -98,7 +98,7 @@ export default function AdminDash() {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
+          // checkboxSelection
         />
       </Box>
     </Box>
