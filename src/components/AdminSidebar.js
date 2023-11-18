@@ -6,6 +6,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -42,7 +43,13 @@ export default function AdminDashboard() {
     >
       <List>
         <ListItem>
-          <ListItemText>Blockvote</ListItemText>
+          <ListItemText>Blockvote Dashboard</ListItemText>
+        </ListItem>
+        <ListItem component={Link} to="/su/status">
+          <ListItemIcon>
+            <AccessTimeFilledIcon />
+          </ListItemIcon>
+          <ListItemText>Status</ListItemText>
         </ListItem>
         <ListItem component={Link} to="/su/users">
           <ListItemIcon>
