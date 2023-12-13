@@ -57,11 +57,7 @@ const CandidateNewPage = () => {
     createCandidate(formData);
 
     if (success) {
-      setIsLoading(true);
-      setTimeout(function () {
-        navigate("/su/candidates");
-        setIsLoading(false);
-      }, 5000);
+      navigate("/su/candidates");
     }
   };
 

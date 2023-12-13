@@ -53,6 +53,7 @@ const AdminUpdatePage = () => {
     updateAdmin(id, data);
     if (success) {
       navigate("/su/admins");
+      window.location.reload();
     }
   };
 

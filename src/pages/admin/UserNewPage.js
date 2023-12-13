@@ -37,10 +37,9 @@ const UserNewPage = () => {
     createUser(data);
 
     if (success) {
-      setIsLoading(true);
       setTimeout(function () {
         navigate("/su/users");
-        setIsLoading(false);
+        window.location.reload();
       }, 10000);
     }
   };

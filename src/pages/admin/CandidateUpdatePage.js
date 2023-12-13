@@ -73,10 +73,10 @@ const CandidateUpdatePage = () => {
       formData.append("mission[]", missions[i]);
     }
     formData.append("img", selectedImage);
-
     updateCandidate(id, formData);
     if (success) {
       navigate("/su/candidates");
+      window.location.reload();
     }
   };
 

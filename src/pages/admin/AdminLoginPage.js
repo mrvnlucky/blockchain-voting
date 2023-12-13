@@ -16,6 +16,7 @@ export default function AdminLoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    checkAuth();
     if (isAuth) {
       navigate("/su/candidates");
     }

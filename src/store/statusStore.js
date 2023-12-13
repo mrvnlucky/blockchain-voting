@@ -65,6 +65,7 @@ export const useStatusStore = create((set) => ({
         loading: true,
       });
       const response = await axios.post(`${API_URL}/vote/start`, {}, config);
+
       set({
         status: true,
         loading: false,

@@ -1,11 +1,3 @@
-// const ProtectedRoute = ({ user, children }) => {
-//   if (!user) {
-//     return <Navigate to="/landing" replace />;
-//   }
-
-//   return children;
-// };
-
 import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAdminAuthStore } from "./store/adminAuthStore";
@@ -17,7 +9,8 @@ const ProtectedRoute = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  if (!isAuth) {
+  const isAuthenticated = sessionStorage.getItem("adminToken");
+  if (!isAuth && !isAuthenticated) {
     return <Navigate to="/su/login" replace />;
   }
   return children;

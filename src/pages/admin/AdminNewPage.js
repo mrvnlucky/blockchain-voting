@@ -36,6 +36,7 @@ const AdminNewPage = () => {
     createAdmin(data);
     if (success) {
       navigate("/su/admins");
+      window.location.reload();
     }
     // Handle form submission logic here
   };
