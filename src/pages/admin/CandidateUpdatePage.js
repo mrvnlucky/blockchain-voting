@@ -76,7 +76,6 @@ const CandidateUpdatePage = () => {
     updateCandidate(id, formData);
     if (success) {
       navigate("/su/candidates");
-      window.location.reload();
     }
   };
 

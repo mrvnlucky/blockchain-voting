@@ -53,7 +53,6 @@ const UserUpdatePage = () => {
     updateUser(id, data);
     if (success) {
       navigate("/su/users");
-      window.location.reload();
     }
     // Handle form submission logic here
   };
